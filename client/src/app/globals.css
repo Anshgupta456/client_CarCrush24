@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: var(--font-poppins), system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+
+  --color-bg-base: #F8F9F5;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-dark-section: #16311F;
+  --color-primary: #1F5C33;
+  --color-accent: #6FCF3C;
+  --color-accent-hover: #5AB82E;
+  --color-text-primary: #131A15;
+  --color-text-secondary: #5B6660;
+  --color-text-on-dark: #FFFFFF;
+  --color-border: #E4E7DE;
+  --color-error: #D9534F;
+}
+
+:root {
+  --bg-base: #F8F9F5;
+  --bg-surface: #FFFFFF;
+  --bg-dark-section: #16311F;
+  --primary: #1F5C33;
+  --accent: #6FCF3C;
+  --text-primary: #131A15;
+  --text-secondary: #5B6660;
+}
+
+/* Light only theme per project spec */
+body {
+  background-color: #F8F9F5;
+  color: #131A15;
+  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-poppins), system-ui, sans-serif;
+}
+
+/* Smooth transition utility */
+.transition-smooth {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
