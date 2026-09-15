@@ -6,7 +6,6 @@ import CarCrushLogo from './CarCrushLogo';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
 
   return (
     <header className="fixed top-4 sm:top-6 left-0 right-0 z-50 px-4 sm:px-6">
@@ -30,49 +29,6 @@ export default function Navbar() {
             <Link href="/about" className="hover:text-white transition-colors">
               About
             </Link>
-
-            {/* Services Dropdown */}
-            <div
-              className="relative group cursor-pointer"
-              onMouseEnter={() => setServicesOpen(true)}
-              onMouseLeave={() => setServicesOpen(false)}
-            >
-              <button
-                type="button"
-                className="flex items-center gap-1 hover:text-white transition-colors py-1 cursor-pointer"
-                onClick={() => setServicesOpen(!servicesOpen)}
-              >
-                <span>Services</span>
-                <svg
-                  className={`w-3.5 h-3.5 transition-transform duration-200 ${servicesOpen ? 'rotate-180 text-[#6FCF3C]' : 'text-[#8ca394]'}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {servicesOpen && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 rounded-2xl bg-[#112317]/95 backdrop-blur-lg border border-[#23452c] p-2 shadow-2xl flex flex-col gap-1 text-sm">
-                  <Link href="/services/scrapping" className="px-3 py-2 rounded-xl hover:bg-[#1a3823] hover:text-[#6FCF3C] transition-colors">
-                    Vehicle Scrapping
-                  </Link>
-                  <Link href="/services/recycling" className="px-3 py-2 rounded-xl hover:bg-[#1a3823] hover:text-[#6FCF3C] transition-colors">
-                    Eco Recycling
-                  </Link>
-                  <Link href="/services/parts-sales" className="px-3 py-2 rounded-xl hover:bg-[#1a3823] hover:text-[#6FCF3C] transition-colors">
-                    Reusable Parts Sales
-                  </Link>
-                  <Link href="/services/free-collection" className="px-3 py-2 rounded-xl hover:bg-[#1a3823] hover:text-[#6FCF3C] transition-colors">
-                    Free Vehicle Towing
-                  </Link>
-                  <Link href="/services/paperwork" className="px-3 py-2 rounded-xl hover:bg-[#1a3823] hover:text-[#6FCF3C] transition-colors">
-                    RTO Certificate &amp; Paperwork
-                  </Link>
-                </div>
-              )}
-            </div>
 
             <Link href="/how-it-works" className="hover:text-white transition-colors">
               How It Works
@@ -139,9 +95,6 @@ export default function Navbar() {
             </Link>
             <Link href="/about" className="px-3 py-2 rounded-xl hover:bg-white/5">
               About
-            </Link>
-            <Link href="/services" className="px-3 py-2 rounded-xl hover:bg-white/5">
-              Services
             </Link>
             <Link href="/how-it-works" className="px-3 py-2 rounded-xl hover:bg-white/5">
               How It Works
