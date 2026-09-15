@@ -127,8 +127,8 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/why-us" className="hover:text-white transition-colors">
-                    Why Choose Us
+                  <Link href="/blogs" className="hover:text-white transition-colors">
+                    Blogs &amp; Vehicle Guides
                   </Link>
                 </li>
                 <li>

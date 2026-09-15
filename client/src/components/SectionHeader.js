@@ -7,11 +7,14 @@ export default function SectionHeader({
   title,
   highlight,
   description,
-  align = 'left',
-  withBar = false,
+  align = 'center',
   className = '',
+  titleClassName = '',
+  descClassName = '',
+  as = 'h2',
 }) {
   const isCenter = align === 'center';
+  const HeadingTag = as;
 
   return (
     <div
@@ -19,36 +22,45 @@ export default function SectionHeader({
         isCenter ? 'items-center text-center mx-auto' : 'items-start text-left'
       } ${className}`}
     >
-      {/* Eyebrow badge with glowing green pulse dot */}
+      {/* Eyebrow badge with decorative green lines */}
       {eyebrow && (
-        <div className="inline-flex items-center gap-2 mb-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#6FCF3C] animate-ping" />
-          <span className="text-[#188A38] text-xs sm:text-sm font-extrabold tracking-[0.22em] uppercase">
+        <div
+          className={`inline-flex items-center ${
+            isCenter ? 'justify-center' : 'justify-start'
+          } gap-3 mb-3 sm:mb-4`}
+        >
+          <span className="w-8 sm:w-12 h-[2px] bg-[#6FCF3C]" />
+          <span className="text-[#188A38] text-xs sm:text-[13px] font-black tracking-[0.25em] uppercase">
             {eyebrow}
           </span>
+          <span className="w-8 sm:w-12 h-[2px] bg-[#6FCF3C]" />
         </div>
-      )}
-
-      {/* Optional Decorative Accent Bar */}
-      {withBar && (
-        <div className="w-12 h-1 bg-[#188A38] rounded-full mx-auto mt-1 mb-3.5" />
       )}
 
       {/* Main Headline */}
       {(title || highlight) && (
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#131A15] tracking-tight leading-[1.12]">
+        <HeadingTag
+          className={
+            titleClassName ||
+            'text-2xl sm:text-3xl lg:text-[42px] font-black text-[#111827] tracking-tight leading-[1.15]'
+          }
+        >
           {title}{' '}
           {highlight && (
-            <span className="text-[#6FCF3C] block mt-1.5 sm:mt-2">
+            <span className="block text-[#6FCF3C] mt-1 sm:mt-1.5">
               {highlight}
             </span>
           )}
-        </h2>
+        </HeadingTag>
       )}
 
       {/* Optional Description / Subtitle Paragraph */}
       {description && (
-        <p className="mt-5 text-[#5B6660] text-base sm:text-[17px] leading-relaxed max-w-2xl">
+        <p
+          className={`mt-4 sm:mt-5 leading-relaxed max-w-2xl ${
+            descClassName || 'text-[#5B6660] text-xs sm:text-[14px]'
+          }`}
+        >
           {description}
         </p>
       )}

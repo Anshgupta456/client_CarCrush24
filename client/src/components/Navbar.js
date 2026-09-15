@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import CarCrushLogo from './CarCrushLogo';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <header className="fixed top-4 sm:top-6 left-0 right-0 z-50 px-4 sm:px-6">
@@ -20,26 +22,62 @@ export default function Navbar() {
           <nav className="hidden lg:flex items-center gap-7 text-[13.5px] font-medium text-[#d1ded6]">
             <Link
               href="/"
-              className="text-[#6FCF3C] relative py-1 hover:text-[#7ee247] transition-colors font-semibold"
+              className={`relative py-1 transition-colors font-semibold ${
+                pathname === '/' ? 'text-[#6FCF3C]' : 'hover:text-white'
+              }`}
             >
               Home
-              <span className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-[#6FCF3C] rounded-full" />
+              {pathname === '/' && (
+                <span className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-[#6FCF3C] rounded-full" />
+              )}
             </Link>
 
-            <Link href="/about" className="hover:text-white transition-colors">
+            <Link
+              href="/about"
+              className={`relative py-1 transition-colors font-semibold ${
+                pathname === '/about' ? 'text-[#6FCF3C]' : 'hover:text-white'
+              }`}
+            >
               About
+              {pathname === '/about' && (
+                <span className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-[#6FCF3C] rounded-full" />
+              )}
             </Link>
 
-            <Link href="/how-it-works" className="hover:text-white transition-colors">
+            <Link
+              href="/how-it-works"
+              className={`relative py-1 transition-colors font-semibold ${
+                pathname === '/how-it-works' ? 'text-[#6FCF3C]' : 'hover:text-white'
+              }`}
+            >
               How It Works
+              {pathname === '/how-it-works' && (
+                <span className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-[#6FCF3C] rounded-full" />
+              )}
             </Link>
 
-            <Link href="/why-us" className="hover:text-white transition-colors">
-              Why Us
+            <Link
+              href="/blogs"
+              className={`relative py-1 transition-colors font-semibold ${
+                pathname === '/blogs' ? 'text-[#6FCF3C]' : 'hover:text-white'
+              }`}
+            >
+              Blogs
+              {pathname === '/blogs' && (
+                <span className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-[#6FCF3C] rounded-full" />
+              )}
             </Link>
 
-            <Link href="/contact" className="hover:text-white transition-colors">
+            <Link
+              href="/contact"
+              className={`relative py-1 transition-colors font-semibold ${
+                pathname === '/contact' ? 'text-[#6FCF3C]' : 'hover:text-white'
+              }`}
+            >
               Contact
+              {pathname === '/contact' && (
+                <span className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-[#6FCF3C] rounded-full" />
+              )}
             </Link>
           </nav>
 
@@ -90,19 +128,49 @@ export default function Navbar() {
         {/* Mobile Dropdown */}
         {mobileMenuOpen && (
           <div className="lg:hidden mt-2 p-4 rounded-3xl bg-[#112317]/95 backdrop-blur-xl border border-[#23452c] shadow-2xl flex flex-col gap-3 text-sm font-medium text-gray-200">
-            <Link href="/" className="px-3 py-2 rounded-xl text-[#6FCF3C] font-semibold bg-[#193622]">
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`px-3 py-2 rounded-xl font-semibold transition-colors ${
+                pathname === '/' ? 'text-[#6FCF3C] bg-[#193622]' : 'hover:bg-white/5'
+              }`}
+            >
               Home
             </Link>
-            <Link href="/about" className="px-3 py-2 rounded-xl hover:bg-white/5">
+            <Link
+              href="/about"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`px-3 py-2 rounded-xl font-semibold transition-colors ${
+                pathname === '/about' ? 'text-[#6FCF3C] bg-[#193622]' : 'hover:bg-white/5'
+              }`}
+            >
               About
             </Link>
-            <Link href="/how-it-works" className="px-3 py-2 rounded-xl hover:bg-white/5">
+            <Link
+              href="/how-it-works"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`px-3 py-2 rounded-xl font-semibold transition-colors ${
+                pathname === '/how-it-works' ? 'text-[#6FCF3C] bg-[#193622]' : 'hover:bg-white/5'
+              }`}
+            >
               How It Works
             </Link>
-            <Link href="/why-us" className="px-3 py-2 rounded-xl hover:bg-white/5">
-              Why Us
+            <Link
+              href="/blogs"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`px-3 py-2 rounded-xl font-semibold transition-colors ${
+                pathname === '/blogs' ? 'text-[#6FCF3C] bg-[#193622]' : 'hover:bg-white/5'
+              }`}
+            >
+              Blogs
             </Link>
-            <Link href="/contact" className="px-3 py-2 rounded-xl hover:bg-white/5">
+            <Link
+              href="/contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`px-3 py-2 rounded-xl font-semibold transition-colors ${
+                pathname === '/contact' ? 'text-[#6FCF3C] bg-[#193622]' : 'hover:bg-white/5'
+              }`}
+            >
               Contact
             </Link>
             <Link

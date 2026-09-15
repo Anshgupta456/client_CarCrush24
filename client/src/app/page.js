@@ -25,11 +25,11 @@ export default function Home() {
         {/* Reach Section - Serving You Across North India */}
         <ReachSection />
 
-        {/* Why Choose CarCrush24 - Comparison Section */}
-        <WhyChooseSection />
-
         {/* How It Works - 5 Simple Steps */}
         <HowItWorksSection />
+
+        {/* Why Choose CarCrush24 - Comparison Section */}
+        <WhyChooseSection />
 
         {/* What Our Customers Say - Testimonials */}
         <TestimonialsSection />
