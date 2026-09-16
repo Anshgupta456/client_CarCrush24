@@ -3,6 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 
+import QuoteForm from './QuoteForm';
+
 export default function Hero() {
   return (
     <section className="relative min-h-[92vh] lg:min-h-screen flex flex-col justify-between overflow-hidden bg-[#07130a]">
@@ -54,13 +56,12 @@ export default function Hero() {
             </p>
 
             {/* Vehicle Type Badges */}
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-xl">
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-xl">
 
               {/* Two-Wheelers */}
-              <div className="flex items-center gap-3 p-2 rounded-xl bg-[#0e2415]/40 backdrop-blur-sm border border-[#1f4228]/50">
-                <div className="w-10 h-10 rounded-full border-[1.8px] border-[#6FCF3C] flex items-center justify-center flex-shrink-0 bg-[#0d2214]/60">
-                  <svg className="w-5 h-5 text-[#6FCF3C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                    {/* Motorcycle Icon */}
+              <div className="flex items-center gap-2.5 p-2 rounded-xl bg-[#0e2415]/60 backdrop-blur-sm border border-[#1f4228]/60">
+                <div className="w-9 h-9 rounded-full border-[1.8px] border-[#6FCF3C] flex items-center justify-center flex-shrink-0 bg-[#0d2214]/80">
+                  <svg className="w-4 h-4 text-[#6FCF3C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <circle cx="5.5" cy="17.5" r="3.5" />
                     <circle cx="18.5" cy="17.5" r="3.5" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 6h-3l-3 6h7l3-3.5h2.5" />
@@ -68,63 +69,62 @@ export default function Hero() {
                   </svg>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white text-xs sm:text-sm font-bold leading-tight">Two-Wheelers</span>
-                  <span className="text-[#8ba292] text-[11px] font-normal leading-tight mt-0.5">Recycle &bull; Get Paid</span>
+                  <span className="text-white text-xs font-bold leading-tight">Two-Wheelers</span>
+                  <span className="text-[#8ba292] text-[10px] font-normal leading-tight mt-0.5">Recycle &bull; Get Paid</span>
                 </div>
               </div>
 
               {/* Cars */}
-              <div className="flex items-center gap-3 p-2 rounded-xl bg-[#0e2415]/40 backdrop-blur-sm border border-[#1f4228]/50">
-                <div className="w-10 h-10 rounded-full border-[1.8px] border-[#6FCF3C] flex items-center justify-center flex-shrink-0 bg-[#0d2214]/60">
-                  <svg className="w-5 h-5 text-[#6FCF3C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                    {/* Car Icon */}
+              <div className="flex items-center gap-2.5 p-2 rounded-xl bg-[#0e2415]/60 backdrop-blur-sm border border-[#1f4228]/60">
+                <div className="w-9 h-9 rounded-full border-[1.8px] border-[#6FCF3C] flex items-center justify-center flex-shrink-0 bg-[#0d2214]/80">
+                  <svg className="w-4 h-4 text-[#6FCF3C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 17a2 2 0 104 0 2 2 0 00-4 0zM15 17a2 2 0 104 0 2 2 0 00-4 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 17H3v-4l2-5h14l2 5v4h-2M5 17h10" />
                   </svg>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white text-xs sm:text-sm font-bold leading-tight">Cars</span>
-                  <span className="text-[#8ba292] text-[11px] font-normal leading-tight mt-0.5">Eco-Friendly Disposal</span>
+                  <span className="text-white text-xs font-bold leading-tight">Cars &amp; SUVs</span>
+                  <span className="text-[#8ba292] text-[10px] font-normal leading-tight mt-0.5">Eco-Friendly Disposal</span>
                 </div>
               </div>
 
               {/* Commercial Trucks */}
-              <div className="flex items-center gap-3 p-2 rounded-xl bg-[#0e2415]/40 backdrop-blur-sm border border-[#1f4228]/50">
-                <div className="w-10 h-10 rounded-full border-[1.8px] border-[#6FCF3C] flex items-center justify-center flex-shrink-0 bg-[#0d2214]/60">
-                  <svg className="w-5 h-5 text-[#6FCF3C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                    {/* Truck Icon */}
+              <div className="flex items-center gap-2.5 p-2 rounded-xl bg-[#0e2415]/60 backdrop-blur-sm border border-[#1f4228]/60">
+                <div className="w-9 h-9 rounded-full border-[1.8px] border-[#6FCF3C] flex items-center justify-center flex-shrink-0 bg-[#0d2214]/80">
+                  <svg className="w-4 h-4 text-[#6FCF3C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M1 3h15v13H1zM16 8h4l3 3v5h-7z" />
                     <circle cx="5.5" cy="18.5" r="2.5" />
                     <circle cx="18.5" cy="18.5" r="2.5" />
                   </svg>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-white text-xs sm:text-sm font-bold leading-tight">Commercial Trucks</span>
-                  <span className="text-[#8ba292] text-[11px] font-normal leading-tight mt-0.5">For Businesses &amp; Fleets</span>
+                  <span className="text-white text-xs font-bold leading-tight">Commercial Trucks</span>
+                  <span className="text-[#8ba292] text-[10px] font-normal leading-tight mt-0.5">Fleets &amp; Businesses</span>
                 </div>
               </div>
 
             </div>
 
-            {/* CTA Buttons */}
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              <Link
-                href="/quote"
-                className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#6FCF3C] hover:bg-[#5AB82E] text-[#0b2112] font-extrabold text-sm sm:text-base tracking-wide shadow-[0_10px_25px_rgba(111,207,60,0.35)] transition-all duration-300 hover:scale-[1.03] active:scale-95"
-              >
-                <span className="text-lg leading-none font-bold">↗</span>
-                <span>Get a Quote</span>
-              </Link>
-
-              <Link
-                href="/about"
-                className="inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-transparent hover:bg-white/10 text-white font-semibold text-sm sm:text-base tracking-wide border border-white/30 hover:border-white/70 transition-all duration-300"
-              >
-                Learn More
-              </Link>
-            </div>
+            {/* Quick trust points */}
+            {/* <div className="mt-6 flex flex-wrap items-center gap-5 text-xs text-[#a5b8ac]">
+              <span className="flex items-center gap-1.5">
+                <span className="text-[#6FCF3C]">✓</span> Govt. Authorized Scrapper
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="text-[#6FCF3C]">✓</span> Free Doorstep Towing
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="text-[#6FCF3C]">✓</span> Instant Cash/UPI Settlement
+              </span>
+            </div> */}
 
           </div>
+
+          {/* Right Column: Instant Get a Quote Form Widget */}
+          <div id="quote-form" className="lg:col-span-5 w-full flex justify-center lg:justify-end">
+            <QuoteForm />
+          </div>
+
         </div>
       </div>
     </section>
