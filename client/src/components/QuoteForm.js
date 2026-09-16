@@ -44,11 +44,6 @@ const Icons = {
       <circle cx="18" cy="12" r="1.8" />
     </svg>
   ),
-  Sparkles: () => (
-    <svg className="w-3.5 h-3.5 text-[#1F5C33]" viewBox="0 0 20 20" fill="currentColor">
-      <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-    </svg>
-  ),
   Check: () => (
     <svg className="w-3 h-3 text-[#1F5C33]" viewBox="0 0 20 20" fill="currentColor">
       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -98,8 +93,6 @@ export default function QuoteForm() {
     runs: 'Yes, starts & drives',
   });
 
-  const [isFetchingParivahan, setIsFetchingParivahan] = useState(false);
-  const [parivahanFetched, setParivahanFetched] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -127,50 +120,6 @@ export default function QuoteForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Parivahan Auto-Fetch Handler
-  const handleFetchParivahan = () => {
-    const rawNum = formData.vehicleNumber.trim();
-    if (!rawNum) {
-      alert('Please enter a vehicle registration number first (e.g. DL 01 AB 1234)');
-      return;
-    }
-
-    setIsFetchingParivahan(true);
-
-    // Simulate Parivahan API fetch delay
-    setTimeout(() => {
-      setIsFetchingParivahan(false);
-      setParivahanFetched(true);
-
-      // Populate mock data if fields are empty or as sample fetch
-      if (vehicleType === 'bike') {
-        setFormData((prev) => ({
-          ...prev,
-          year: '2017',
-          make: 'Hero',
-          model: 'Splendor Plus',
-          vehicleNumber: rawNum.toUpperCase(),
-        }));
-      } else if (vehicleType === 'truck' || vehicleType === 'bus') {
-        setFormData((prev) => ({
-          ...prev,
-          year: '2015',
-          make: 'Tata Motors',
-          model: 'LPT 1613',
-          vehicleNumber: rawNum.toUpperCase(),
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          year: '2016',
-          make: 'Maruti Suzuki',
-          model: 'Swift Dzire VDi',
-          vehicleNumber: rawNum.toUpperCase(),
-        }));
-      }
-    }, 700);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -184,7 +133,6 @@ export default function QuoteForm() {
 
   const handleResetForm = () => {
     setIsSubmitted(false);
-    setParivahanFetched(false);
     setFormData({
       name: '',
       phone: '',
@@ -212,26 +160,22 @@ export default function QuoteForm() {
             <button
               type="button"
               onClick={() => handleClientTypeChange('personal')}
-              className={`py-1.5 px-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                clientType === 'personal'
-                  ? 'bg-white text-[#131A15] shadow-sm font-extrabold border border-black/5'
-                  : 'text-[#5B6660] hover:text-[#131A15]'
-              }`}
+              className={`py-1.5 px-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${clientType === 'personal'
+                ? 'bg-white text-[#131A15] shadow-sm font-extrabold border border-black/5'
+                : 'text-[#5B6660] hover:text-[#131A15]'
+                }`}
             >
-              <span>👤</span>
               <span>Individual / Personal</span>
             </button>
 
             <button
               type="button"
               onClick={() => handleClientTypeChange('commercial')}
-              className={`py-1.5 px-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                clientType === 'commercial'
-                  ? 'bg-white text-[#131A15] shadow-sm font-extrabold border border-black/5'
-                  : 'text-[#5B6660] hover:text-[#131A15]'
-              }`}
+              className={`py-1.5 px-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${clientType === 'commercial'
+                ? 'bg-white text-[#131A15] shadow-sm font-extrabold border border-black/5'
+                : 'text-[#5B6660] hover:text-[#131A15]'
+                }`}
             >
-              <span>🏢</span>
               <span>Commercial / Fleet</span>
             </button>
           </div>
@@ -249,19 +193,17 @@ export default function QuoteForm() {
                   key={tab.id}
                   type="button"
                   onClick={() => handleVehicleTypeChange(tab.id)}
-                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all relative ${
-                    isSelected
-                      ? 'bg-white border-2 border-[#131A15] shadow-sm text-[#131A15]'
-                      : 'bg-[#F4F6F1] border border-transparent text-[#6B7770] hover:bg-[#EAEFE6] hover:text-[#131A15]'
-                  }`}
+                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all relative ${isSelected
+                    ? 'bg-white border-2 border-[#131A15] shadow-sm text-[#131A15]'
+                    : 'bg-[#F4F6F1] border border-transparent text-[#6B7770] hover:bg-[#EAEFE6] hover:text-[#131A15]'
+                    }`}
                 >
                   <div className={`transition-transform duration-150 ${isSelected ? 'scale-105 text-[#1F5C33]' : 'text-current'}`}>
                     <IconComponent />
                   </div>
 
-                  <span className={`text-[10px] font-extrabold tracking-wider mt-1 uppercase leading-tight ${
-                    isSelected ? 'text-[#131A15]' : 'text-[#6B7770]'
-                  }`}>
+                  <span className={`text-[10px] font-extrabold tracking-wider mt-1 uppercase leading-tight ${isSelected ? 'text-[#131A15]' : 'text-[#6B7770]'
+                    }`}>
                     {tab.label}
                   </span>
 
@@ -278,23 +220,11 @@ export default function QuoteForm() {
         {!isSubmitted ? (
           <form onSubmit={handleSubmit} className="space-y-2.5">
 
-            {/* FIELD 1: Indian Vehicle Registration Plate (First field + Parivahan Integration) */}
+            {/* FIELD 1: Vehicle Registration Number */}
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-[10px] font-bold text-[#5B6660] uppercase tracking-wider flex items-center gap-1">
-                  <span>Vehicle Number</span>
-                  <span className="text-[#D9534F]">*</span>
-                </label>
-                {parivahanFetched ? (
-                  <span className="text-[10px] font-semibold text-[#1F5C33] flex items-center gap-0.5">
-                    <Icons.Check /> Parivahan Verified
-                  </span>
-                ) : (
-                  <span className="text-[10px] text-[#7A867F]">
-                    Fetches details via Parivahan API
-                  </span>
-                )}
-              </div>
+              <label className="block text-[10px] font-bold text-[#5B6660] uppercase tracking-wider mb-1">
+                Vehicle Number <span className="text-[#D9534F]">*</span>
+              </label>
 
               <div className="flex items-center border border-[#D0D6CA] rounded-xl overflow-hidden bg-white shadow-xs focus-within:ring-2 focus-within:ring-[#6FCF3C] focus-within:border-transparent">
                 {/* Indian Plate IND Badge */}
@@ -316,30 +246,13 @@ export default function QuoteForm() {
                   }}
                   className="flex-1 px-3 py-2 text-xs sm:text-sm font-bold uppercase tracking-wider text-[#131A15] placeholder:text-[#9AA59D] placeholder:font-normal focus:outline-none"
                 />
-
-                <button
-                  type="button"
-                  onClick={handleFetchParivahan}
-                  disabled={isFetchingParivahan}
-                  className="px-2.5 py-2 bg-[#F1F5EB] hover:bg-[#E3EDD9] text-[#1F5C33] text-[10px] sm:text-[11px] font-bold flex items-center gap-1 border-l border-[#D0D6CA] transition-colors whitespace-nowrap cursor-pointer"
-                  title="Auto-fetch vehicle details from Parivahan VAHAN database"
-                >
-                  {isFetchingParivahan ? (
-                    <span className="animate-pulse">Fetching...</span>
-                  ) : (
-                    <>
-                      <Icons.Sparkles />
-                      <span>Fetch</span>
-                    </>
-                  )}
-                </button>
               </div>
             </div>
 
-            {/* FIELD ROW 2: Vehicle Details (Year | Make | Model) - Editable after auto-fetch */}
+            {/* FIELD ROW 2: Vehicle Details (Year | Make | Model) */}
             <div>
               <label className="block text-[10px] font-bold text-[#5B6660] uppercase tracking-wider mb-1">
-                Vehicle Details (Auto-filled / Editable)
+                Vehicle Details
               </label>
               <div className="grid grid-cols-3 gap-1.5 bg-[#F8F9F5] p-1 rounded-xl border border-[#E4E7DE]">
                 {/* Year */}
@@ -438,8 +351,8 @@ export default function QuoteForm() {
                     className="w-full appearance-none bg-white border border-[#DCE1D7] rounded-lg px-2 py-1.5 pr-6 text-xs font-semibold text-[#131A15] focus:outline-none focus:ring-1 focus:ring-[#6FCF3C] cursor-pointer"
                   >
                     <option value="Yes, starts & drives">Does it run? Yes</option>
-                    <option value="Starts, doesn't drive">Starts, won't drive</option>
-                    <option value="Does not start / Seized">Doesn't run</option>
+                    <option value="Starts, doesn't drive">Starts, won&apos;t drive</option>
+                    <option value="Does not start / Seized">Doesn&apos;t run</option>
                     <option value="Scrapped / Dismantled">Dismantled / Shell</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-1.5 text-[#5B6660]">
@@ -506,14 +419,6 @@ export default function QuoteForm() {
                 </>
               )}
             </button>
-
-            {/* Streamlined Trust Line */}
-            <div className="pt-1 flex items-center justify-between text-[10px] font-semibold text-[#5B6660] px-1">
-              <span className="flex items-center gap-0.5"><Icons.Check /> Free Towing</span>
-              <span className="flex items-center gap-0.5"><Icons.Check /> Instant Payment</span>
-              <span className="flex items-center gap-0.5"><Icons.Check /> COD Certificate</span>
-            </div>
-
           </form>
         ) : (
           /* Thank You Screen (Matching user reference) */

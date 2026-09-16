@@ -9,24 +9,26 @@ export default function Hero() {
   return (
     <section className="relative min-h-[92vh] lg:min-h-screen flex flex-col justify-between overflow-hidden bg-[#07130a]">
       {/* Background Image Container */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute top-0 left-0 right-0 h-[640px] sm:h-[720px] lg:h-full lg:inset-0 z-0 overflow-hidden">
         <div
-          className="w-full h-full bg-cover bg-right sm:bg-center scale-100 transition-transform duration-1000"
+          className="w-full h-full bg-cover bg-[63%_center] sm:bg-[60%_center] lg:bg-center scale-100 transition-transform duration-1000"
           style={{
             backgroundImage: "url('/images/hero-bg.jpg')",
           }}
         />
 
-        {/* Gradient Vignettes & Contrast Overlays */}
-        {/* Left-side subtle gradient to ensure text readability without darkening background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#061409]/75 via-[#08180c]/45 to-transparent sm:w-[55%] w-full z-[1]" />
+        {/* Left-side subtle gradient to ensure text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#061409]/90 via-[#08180c]/60 to-transparent sm:w-[55%] w-[78%] z-[1]" />
 
-        {/* Bottom fade into trustbar */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#08150c]/80 to-transparent z-[1]" />
+        {/* Bottom smooth fade out into dark background */}
+        <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-[#07130a] via-[#07130a]/80 to-transparent z-[1]" />
 
         {/* Subtle top fade for navbar */}
         <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-[#061409]/40 to-transparent z-[1]" />
       </div>
+
+      {/* Bottom fade into trustbar */}
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#08150c] to-transparent z-[1] pointer-events-none" />
 
       {/* Main Hero Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 sm:pt-36 lg:pt-40 pb-16 flex-1 flex flex-col justify-center">

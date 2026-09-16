@@ -14,19 +14,28 @@ export default function SectionHeader({
   as = 'h2',
 }) {
   const isCenter = align === 'center';
+  const isResponsive = align === 'responsive' || align === 'center lg:left';
   const HeadingTag = as;
 
   return (
     <div
       className={`flex flex-col ${
-        isCenter ? 'items-center text-center mx-auto' : 'items-start text-left'
+        isResponsive
+          ? 'items-center text-center mx-auto lg:items-start lg:text-left lg:mx-0'
+          : isCenter
+          ? 'items-center text-center mx-auto'
+          : 'items-start text-left'
       } ${className}`}
     >
       {/* Eyebrow badge with decorative green lines */}
       {eyebrow && (
         <div
           className={`inline-flex items-center ${
-            isCenter ? 'justify-center' : 'justify-start'
+            isResponsive
+              ? 'justify-center lg:justify-start'
+              : isCenter
+              ? 'justify-center'
+              : 'justify-start'
           } gap-3 mb-3 sm:mb-4`}
         >
           <span className="w-8 sm:w-12 h-[2px] bg-[#6FCF3C]" />

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { Car, Leaf, Recycle, IndianRupee } from 'lucide-react';
 
 export const metadata = {
   title: 'About Us | CarCrush24 - India’s Premier Vehicle Recycling Facility',
@@ -15,52 +16,25 @@ export default function AboutPage() {
       metric: '15,000+',
       label: 'Vehicles Recycled',
       detail: 'Cars, two-wheelers & commercial fleets safely retired with zero environmental damage.',
-      icon: (
-        <svg className="w-6 h-6 text-[#188A38]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 3c-.1.2-.1.5-.1.7V16c0 .6.4 1 1 1h2" />
-          <circle cx="7" cy="17" r="2" />
-          <path d="M9 17h6" />
-          <circle cx="17" cy="17" r="2" />
-        </svg>
-      ),
+      icon: <Car className="w-5 h-5 text-[#188A38]" strokeWidth={2.2} />,
     },
     {
       metric: '85,000+ T',
       label: 'CO₂ Emissions Prevented',
       detail: 'Direct carbon reduction achieved through automated green dismantling & recycling.',
-      icon: (
-        <svg className="w-6 h-6 text-[#188A38]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
-          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
-        </svg>
-      ),
+      icon: <Leaf className="w-5 h-5 text-[#188A38]" strokeWidth={2.2} />,
     },
     {
       metric: '90%+',
       label: 'Material Recovery Rate',
       detail: 'High-grade steel, aluminium, rubber, and glass reclaimed for the circular economy.',
-      icon: (
-        <svg className="w-6 h-6 text-[#188A38]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
-          <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" />
-          <path d="m14 16 3 3 3-3" />
-          <path d="M8.294 4.5h7.412a1.83 1.83 0 0 1 1.57.882 1.785 1.785 0 0 1 .004 1.783L13.8 13.5" />
-          <path d="m10 8-3-3.5L10 1" />
-        </svg>
-      ),
+      icon: <Recycle className="w-5 h-5 text-[#188A38]" strokeWidth={2.2} />,
     },
     {
       metric: '₹50+ Cr',
       label: 'Scrap Value Delivered',
       detail: 'Fair, transparent, direct-to-bank compensation paid out to vehicle owners on the spot.',
-      icon: (
-        <svg className="w-6 h-6 text-[#188A38]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M6 3h12" />
-          <path d="M6 8h12" />
-          <path d="m6 13 8.5 8" />
-          <path d="M6 13h3a4 4 0 0 0 0-8" />
-        </svg>
-      ),
+      icon: <IndianRupee className="w-5 h-5 text-[#188A38]" strokeWidth={2.2} />,
     },
   ];
 
@@ -625,9 +599,7 @@ export default function AboutPage() {
                 {/* 3 Core Value Feature Cards */}
                 <div className="mt-8 sm:mt-10 grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
                   <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xs hover:border-[#6FCF3C]/40 transition-colors">
-                    <div className="w-9 h-9 rounded-xl bg-[#6FCF3C]/15 text-[#6FCF3C] flex items-center justify-center font-bold text-sm mb-3">
-                      ✓
-                    </div>
+
                     <h4 className="text-sm font-bold text-white mb-1">
                       100% Legal Indemnity
                     </h4>
@@ -637,9 +609,7 @@ export default function AboutPage() {
                   </div>
 
                   <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xs hover:border-[#6FCF3C]/40 transition-colors">
-                    <div className="w-9 h-9 rounded-xl bg-[#6FCF3C]/15 text-[#6FCF3C] flex items-center justify-center font-bold text-sm mb-3">
-                      ₹
-                    </div>
+
                     <h4 className="text-sm font-bold text-white mb-1">
                       Algorithmic Scrap Pricing
                     </h4>
@@ -649,9 +619,6 @@ export default function AboutPage() {
                   </div>
 
                   <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xs hover:border-[#6FCF3C]/40 transition-colors">
-                    <div className="w-9 h-9 rounded-xl bg-[#6FCF3C]/15 text-[#6FCF3C] flex items-center justify-center font-bold text-sm mb-3">
-                      ⚡
-                    </div>
                     <h4 className="text-sm font-bold text-white mb-1">
                       Free Doorstep Towing
                     </h4>
