@@ -7,6 +7,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import CtaBannerSection from '../../components/CtaBannerSection';
 import SectionHeader from '../../components/SectionHeader';
+import { Truck, Zap, FileCheck2 } from 'lucide-react';
 
 export default function HowItWorksPage() {
   const [activeDocTab, setActiveDocTab] = useState('individual');
@@ -134,25 +135,21 @@ export default function HowItWorksPage() {
       stage: 'Stage 01',
       title: 'Eco-Depollution & Fluid Purge',
       desc: 'Automated evacuation of engine oil, transmission fluid, battery acid, AC Freon refrigerants, and coolant with zero ground contamination.',
-      icon: '🧪',
     },
     {
       stage: 'Stage 02',
       title: 'Hazardous Parts Dismantling',
       desc: 'Lead-acid / EV lithium-ion batteries, catalytic converters, airbags, and pyrotechnic seatbelts are dismantled by certified technicians.',
-      icon: '🔋',
     },
     {
       stage: 'Stage 03',
       title: 'Material Segregation',
       desc: 'Tires, windscreens, seat foam, and copper wiring harnesses are sorted for secondary industrial re-processing.',
-      icon: '♻️',
     },
     {
       stage: 'Stage 04',
       title: 'Industrial Baling & Metal Shearing',
       desc: 'The clean automotive chassis is compressed and sheared into clean steel scrap cubes, returned 90%+ into domestic steel making.',
-      icon: '⚙️',
     },
   ];
 
@@ -209,8 +206,8 @@ export default function HowItWorksPage() {
             {/* 3 Core Guarantees Banner */}
             <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
               <div className="p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs flex items-center gap-3.5 text-left">
-                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center font-black text-base flex-shrink-0">
-                  🚚
+                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center flex-shrink-0">
+                  <Truck className="w-5 h-5 text-[#188A38]" strokeWidth={2.2} />
                 </span>
                 <div>
                   <h4 className="text-xs sm:text-[13px] font-bold text-[#111827]">Free Doorstep Towing</h4>
@@ -219,8 +216,8 @@ export default function HowItWorksPage() {
               </div>
 
               <div className="p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs flex items-center gap-3.5 text-left">
-                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center font-black text-base flex-shrink-0">
-                  ⚡
+                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center flex-shrink-0">
+                  <Zap className="w-5 h-5 text-[#188A38]" strokeWidth={2.2} />
                 </span>
                 <div>
                   <h4 className="text-xs sm:text-[13px] font-bold text-[#111827]">Instant Bank Transfer</h4>
@@ -229,8 +226,8 @@ export default function HowItWorksPage() {
               </div>
 
               <div className="p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs flex items-center gap-3.5 text-left">
-                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center font-black text-base flex-shrink-0">
-                  📜
+                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center flex-shrink-0">
+                  <FileCheck2 className="w-5 h-5 text-[#188A38]" strokeWidth={2.2} />
                 </span>
                 <div>
                   <h4 className="text-xs sm:text-[13px] font-bold text-[#111827]">MoRTH CoD &amp; CVS</h4>
@@ -246,7 +243,7 @@ export default function HowItWorksPage() {
         {/* ================= THE 5-STEP JOURNEY SECTION ================= */}
         <section className="relative py-12 sm:py-16 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
+
             <SectionHeader
               eyebrow="STEP-BY-STEP WORKFLOW"
               title="From Instant Valuation to"
@@ -326,7 +323,7 @@ export default function HowItWorksPage() {
         {/* ================= 4-STAGE RVSF DEPOLLUTION PROCESS ================= */}
         <section className="relative py-12 sm:py-16 bg-[#F8FAF8] overflow-hidden border-y border-[#E8ECE4]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
+
             <SectionHeader
               eyebrow="BEHIND THE SCENES"
               title="What Happens at Our"
@@ -345,9 +342,6 @@ export default function HowItWorksPage() {
                 >
                   <div>
                     <div className="flex items-center justify-between mb-4">
-                      <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-xl flex items-center justify-center">
-                        {s.icon}
-                      </span>
                       <span className="text-[11px] font-black text-[#188A38] uppercase tracking-wider bg-[#E8F8ED] px-2.5 py-1 rounded-full">
                         {s.stage}
                       </span>
@@ -370,7 +364,7 @@ export default function HowItWorksPage() {
         {/* ================= REQUIRED DOCUMENTS CHECKLIST ================= */}
         <section className="relative py-12 sm:py-16 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
+
             <SectionHeader
               eyebrow="DOCUMENT CHECKLIST"
               title="Hassle-Free Verification:"
@@ -384,18 +378,17 @@ export default function HowItWorksPage() {
             {/* Document Tabs */}
             <div className="flex justify-center gap-2 sm:gap-3 mb-8">
               {[
-                { id: 'individual', label: '🚗 Private Cars' },
-                { id: 'commercial', label: '🚚 Commercial Vehicles' },
-                { id: 'financed', label: '🏦 Financed / Loan Vehicles' },
+                { id: 'individual', label: 'Private Cars' },
+                { id: 'commercial', label: 'Commercial Vehicles' },
+                { id: 'financed', label: 'Financed / Loan Vehicles' },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveDocTab(tab.id)}
-                  className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-bold transition-all ${
-                    activeDocTab === tab.id
-                      ? 'bg-[#188A38] text-white shadow-md'
-                      : 'bg-[#F2F4F2] text-[#4B5563] hover:bg-[#E5EAE5]'
-                  }`}
+                  className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-bold transition-all ${activeDocTab === tab.id
+                    ? 'bg-[#188A38] text-white shadow-md'
+                    : 'bg-[#F2F4F2] text-[#4B5563] hover:bg-[#E5EAE5]'
+                    }`}
                 >
                   {tab.label}
                 </button>

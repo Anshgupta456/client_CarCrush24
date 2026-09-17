@@ -43,27 +43,11 @@ const trustItems = [
 
 export default function TrustBar() {
   return (
-    <div className="relative w-full bg-[#08150c] pt-2 pb-8 sm:pb-10 border-t border-[#1d3d24]/50 z-20">
-      {/* Subtle organic neon wave line accent across the top */}
-      <div className="absolute -top-[18px] left-0 right-0 w-full overflow-hidden leading-none pointer-events-none opacity-80">
-        <svg
-          viewBox="0 0 1440 36"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-7 object-cover"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0 24C240 10 480 30 720 18C960 6 1200 28 1440 14"
-            stroke="#6FCF3C"
-            strokeWidth="2"
-            strokeOpacity="0.85"
-            className="filter drop-shadow-[0_0_8px_rgba(111,207,60,0.6)]"
-          />
-        </svg>
-      </div>
+    <div className="relative w-full bg-[#08150c] py-6 sm:py-7 border-t border-[#6FCF3C]/30 z-20">
+      {/* Straight glowing neon accent line across the top */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#6FCF3C] opacity-85 shadow-[0_0_10px_rgba(111,207,60,0.7)] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {trustItems.map((item, idx) => (
             <div

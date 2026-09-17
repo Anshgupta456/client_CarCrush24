@@ -68,7 +68,8 @@ export default function ReachSection() {
 
   return (
     <section
-      className="relative py-10 lg:py-14 bg-cover bg-right lg:bg-center bg-no-repeat overflow-hidden bg-white"
+      id="reach-section"
+      className="relative py-10 lg:py-14 bg-cover bg-center sm:bg-[60%_center] lg:bg-center bg-no-repeat overflow-hidden bg-white"
       style={{
         backgroundImage: "url('/images/location_bg.png')",
       }}
@@ -77,13 +78,13 @@ export default function ReachSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-6 items-center">
 
           {/* Left Column: Title, Subtitle */}
-          <div className="lg:col-span-4 flex flex-col items-start text-left">
+          <div className="lg:col-span-4 flex flex-col items-center text-center lg:items-start lg:text-left">
             <SectionHeader
               eyebrow="OUR REACH"
               title="Serving You Across"
               highlight="North India"
               description="CarCrush24 is operational across the entire North India, making vehicle recycling simple, accessible and convenient for everyone."
-              align="left"
+              align="responsive"
             />
           </div>
 
@@ -227,7 +228,7 @@ export default function ReachSection() {
 
               {/* Location Pin for Mobile */}
               <div className="relative mb-8 flex items-center justify-center">
-                <div className="relative w-[160px] h-[200px] flex items-center justify-center filter drop-shadow-[0_12px_24px_rgba(20,95,38,0.35)]">
+                <div className="relative w-[165px] h-[210px] flex items-center justify-center filter drop-shadow-[0_14px_28px_rgba(20,95,38,0.35)]">
                   <svg viewBox="0 0 200 250" className="absolute inset-0 w-full h-full" fill="none">
                     <defs>
                       <linearGradient id="cleanGreenPinMob" x1="100" y1="6" x2="100" y2="246" gradientUnits="userSpaceOnUse">
@@ -243,8 +244,8 @@ export default function ReachSection() {
                     />
                   </svg>
 
-                  <div className="relative z-10 flex flex-col items-center -translate-y-3 px-2 select-none">
-                    <div className="w-14 h-14 relative mb-1">
+                  <div className="relative z-10 flex flex-col items-center justify-center -translate-y-7 px-3 select-none">
+                    <div className="w-14 h-14 relative mb-1.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]">
                       <Image
                         src="/logo/icon_circle_transparent.png"
                         alt="CarCrush Emblem"
@@ -253,16 +254,14 @@ export default function ReachSection() {
                         className="object-contain"
                       />
                     </div>
-                    <span className="text-white font-black text-base tracking-wide uppercase leading-tight">
+                    <span className="text-white font-black text-base tracking-wider uppercase leading-tight drop-shadow-xs">
                       CARCRUSH24
-                    </span>
-                    <span className="text-white/95 text-[6.5px] font-bold tracking-[0.12em] uppercase whitespace-nowrap mt-0.5">
-                      RECYCLE • REUSE • A CLEANER TOMORROW
                     </span>
                   </div>
 
-                  <div className="absolute bottom-[-4px] left-1/2 -translate-x-1/2">
-                    <span className="w-3 h-3 rounded-full bg-[#6FCF3C] shadow-[0_0_12px_#6FCF3C] block border border-white" />
+                  <div className="absolute bottom-[-5px] left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
+                    <span className="absolute w-8 h-8 rounded-full bg-[#6FCF3C]/35 blur-xs animate-pulse" />
+                    <span className="w-3.5 h-3.5 rounded-full bg-[#6FCF3C] shadow-[0_0_14px_#6FCF3C] block border-2 border-white" />
                   </div>
                 </div>
               </div>

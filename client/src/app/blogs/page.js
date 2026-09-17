@@ -164,11 +164,10 @@ export default function BlogsPage() {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-                    selectedCategory === cat
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${selectedCategory === cat
                       ? 'bg-[#188A38] text-white shadow-xs'
                       : 'bg-white border border-[#E2E8F0] text-[#4B5563] hover:border-[#188A38]/50 hover:text-[#188A38]'
-                  }`}
+                    }`}
                 >
                   {cat}
                 </button>
@@ -255,7 +254,7 @@ export default function BlogsPage() {
         {/* ================= ARTICLES GRID ================= */}
         <section className="relative py-10 sm:py-14 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
+
             <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#E8ECE4]">
               <h3 className="text-lg sm:text-xl font-black text-[#111827] tracking-tight">
                 {selectedCategory === 'All' ? 'Latest Publications' : `${selectedCategory} Articles`}
@@ -366,7 +365,7 @@ export default function BlogsPage() {
                   href="tel:1800227278"
                   className="px-5 py-3 rounded-full bg-[#188A38] hover:bg-[#157831] text-white text-xs font-bold text-center transition-all shadow-xs"
                 >
-                  📞 1800-22-CRUSH
+                  1800-22-CRUSH
                 </a>
                 <Link
                   href="/quote"
