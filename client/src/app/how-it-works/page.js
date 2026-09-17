@@ -7,6 +7,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import CtaBannerSection from '../../components/CtaBannerSection';
 import SectionHeader from '../../components/SectionHeader';
+import { Truck, Zap, FileCheck2 } from 'lucide-react';
 
 export default function HowItWorksPage() {
   const [activeDocTab, setActiveDocTab] = useState('individual');
@@ -205,8 +206,8 @@ export default function HowItWorksPage() {
             {/* 3 Core Guarantees Banner */}
             <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
               <div className="p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs flex items-center gap-3.5 text-left">
-                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center font-black text-base flex-shrink-0">
-                  🚚
+                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center flex-shrink-0">
+                  <Truck className="w-5 h-5 text-[#188A38]" strokeWidth={2.2} />
                 </span>
                 <div>
                   <h4 className="text-xs sm:text-[13px] font-bold text-[#111827]">Free Doorstep Towing</h4>
@@ -215,8 +216,8 @@ export default function HowItWorksPage() {
               </div>
 
               <div className="p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs flex items-center gap-3.5 text-left">
-                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center font-black text-base flex-shrink-0">
-                  ⚡
+                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center flex-shrink-0">
+                  <Zap className="w-5 h-5 text-[#188A38]" strokeWidth={2.2} />
                 </span>
                 <div>
                   <h4 className="text-xs sm:text-[13px] font-bold text-[#111827]">Instant Bank Transfer</h4>
@@ -225,8 +226,8 @@ export default function HowItWorksPage() {
               </div>
 
               <div className="p-4 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs flex items-center gap-3.5 text-left">
-                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center font-black text-base flex-shrink-0">
-                  📜
+                <span className="w-10 h-10 rounded-xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center flex-shrink-0">
+                  <FileCheck2 className="w-5 h-5 text-[#188A38]" strokeWidth={2.2} />
                 </span>
                 <div>
                   <h4 className="text-xs sm:text-[13px] font-bold text-[#111827]">MoRTH CoD &amp; CVS</h4>

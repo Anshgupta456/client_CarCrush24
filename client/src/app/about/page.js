@@ -1,9 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { Car, Leaf, Recycle, IndianRupee } from 'lucide-react';
+import { Car, Leaf, Recycle, IndianRupee, Eye, Droplets, ShieldCheck, Truck, Factory, FileCheck } from 'lucide-react';
 
 export const metadata = {
   title: 'About Us | CarCrush24 - India’s Premier Vehicle Recycling Facility',
@@ -43,33 +42,19 @@ export default function AboutPage() {
       number: '01',
       title: 'Uncompromising Transparency',
       desc: 'No arbitrary deductions, surprise towing fees, or shadowy middlemen. Every quote is backed by genuine scrap metal metrics and vehicle inspection data.',
-      icon: (
-        <svg className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66 1-2.3c.42.19.88.3 1.29.3 11 0 14-17 14-17-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z" />
-        </svg>
-      ),
+      icon: <Eye className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" strokeWidth={2} />,
     },
     {
       number: '03',
       title: 'Certified Legal Authenticity',
       desc: 'Direct integration with MoRTH and Parivahan Vahan databases guarantees legitimate Certificate of Deposit (CoD) and CVS issuance for total legal indemnity.',
-      icon: (
-        <svg className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-          <path d="m9 12 2 2 4-4" />
-        </svg>
-      ),
+      icon: <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" strokeWidth={2} />,
     },
     {
       number: '05',
       title: 'Industrial Circularity',
       desc: 'We feed up to 90% of recovered scrap steel, copper, and secondary materials back into domestic industrial production, reducing primary mineral mining.',
-      icon: (
-        <svg className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="3" />
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-        </svg>
-      ),
+      icon: <Factory className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" strokeWidth={2} />,
     },
   ];
 
@@ -78,40 +63,19 @@ export default function AboutPage() {
       number: '02',
       title: 'Eco-First Depollution',
       desc: 'Before any metal is shredded, our facility safely purges engine oils, battery acids, coolant fluids, and Freon AC gases with zero ground leakage.',
-      icon: (
-        <svg className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" viewBox="0 0 512 512" fill="currentColor">
-          <path d="M410.6 302.3c-7.9 0-15.6 3.1-21.2 8.7l-4.5 4.5-12.7-22-24.2 14 15.6 27c2.8 4.8 7.3 8.3 12.6 9.8s11 .6 15.8-2.2l14.7-8.5c5.6-3.2 12.4-3.2 18 0l21.3 12.3c5.6 3.2 9 9.2 9 15.6s-3.4 12.4-9 15.6l-50 28.9c-5.6 3.2-12.4 3.2-18 0l-50-28.9c-5.6-3.2-9-9.2-9-15.6 0-3.3.9-6.5 2.5-9.3l-24.2-14c-4.3 7.5-6.6 16-6.6 24.7 0 16.7 8.9 32.2 23.4 40.5l50 28.9c7.2 4.2 15.3 6.3 23.4 6.3s16.1-2.1 23.4-6.3l50-28.9c14.5-8.4 23.4-23.8 23.4-40.5s-8.9-32.2-23.4-40.5l-21.3-12.3c-7.3-4.2-15.3-6.4-23.4-6.4zm-209.2-94.6l-14.7 8.5c-5.6 3.2-9 9.2-9 15.6l-.1 24.6c0 6.4-3.4 12.4-9 15.6s-12.4 3.2-18 0l-50-28.9c-5.6-3.2-9-9.2-9-15.6s3.4-12.4 9-15.6l50-28.9c5.6-3.2 12.4-3.2 18 0 2.8 1.6 5.2 4 6.8 6.8l24.2-14c-4.3-7.5-10.7-13.6-18.4-18l-50-28.9c-14.5-8.4-32.3-8.4-46.8 0s-23.4 23.8-23.4 40.5 8.9 32.2 23.4 40.5l50 28.9c7.2 4.2 15.3 6.3 23.4 6.3 3.9 0 7.9-.5 11.7-1.6l-7.2 27.1 27 7.2 9.5-35.4c1.7-6.3.3-13.1-3.7-18.4s-10.3-8.4-16.9-8.4h-17.1l.1-14.5 12.7-7.3 14.7-8.5c7.2-4.2 11.7-11.8 11.7-20.2s-4.4-16.1-11.7-20.2zM279.4 66.8c-14.5-8.4-32.3-8.4-46.8 0l-21.3 12.3c-7.2 4.2-11.7 11.8-11.7 20.2s4.4 16.1 11.7 20.2l14.7 8.5c5.6 3.2 9 9.2 9 15.6s-3.4 12.4-9 15.6l-21.3 12.3c-5.6 3.2-12.4 3.2-18 0s-9-9.2-9-15.6l.1-57.7c0-6.4 3.4-12.4 9-15.6l50-28.9c14.5-8.4 32.3-8.4 46.8 0l50 28.9c7.2 4.2 12.8 10.2 16.6 17.5l-24.2 14c-2.3-4.4-5.8-8-10-10.4l-50-28.9zm-2.4 139.1l-11.4 31.3 26.2 9.5 13.9-38.1c2.5-6.8 1.4-14.4-2.9-20.2s-11.2-9.1-18.4-8.8l-29.2 1.3 7.3 12.7 14.5 25.1z" />
-        </svg>
-      ),
+      icon: <Droplets className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" strokeWidth={2} />,
     },
     {
       number: '04',
       title: 'Customer-First Convenience',
       desc: 'Free doorstep pickup across 7 North Indian States and UTs, on-spot digital payment settlement, and complete RTO deregistrations handled end-to-end.',
-      icon: (
-        <svg className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <path d="m11 17 2 2a1 1 0 0 0 1.4 0l4.3-4.3a1 1 0 0 0 0-1.4l-1.3-1.3a1 1 0 0 0-1.4 0L14 14" />
-          <path d="m13 14 2.5-2.5a1 1 0 0 0 0-1.4l-1.3-1.3a1 1 0 0 0-1.4 0L9.5 12" />
-          <path d="M9 13.5 4 8.5a2.12 2.12 0 0 1 0-3 2.12 2.12 0 0 1 3 0l3 3" />
-          <path d="M15 10.5 18.5 7a2.12 2.12 0 0 1 3 0 2.12 2.12 0 0 1 0 3L16 15.5" />
-        </svg>
-      ),
+      icon: <Truck className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" strokeWidth={2} />,
     },
     {
       number: '06',
       title: 'Regulatory Excellence',
       desc: 'Fully compliant with the Motor Vehicles (Vehicle Scrapping Facility) Rules, 2021, and authorized as a Registered Vehicle Scrapping Facility (RVSF).',
-      icon: (
-        <svg className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h7" />
-          <path d="M14 2v6h6" />
-          <path d="M14 2l6 6" />
-          <path d="M8 10h4" />
-          <path d="M8 14h3" />
-          <path d="M17.5 22s4.5-2 4.5-5.5V13l-4.5-1.5-4.5 1.5v3.5c0 3.5 4.5 5.5 4.5 5.5z" />
-          <path d="m15.5 16.5 1.5 1.5 3-3" />
-        </svg>
-      ),
+      icon: <FileCheck className="w-7 h-7 sm:w-8 sm:h-8 text-[#16A34A]" strokeWidth={2} />,
     },
   ];
 
@@ -517,19 +481,17 @@ export default function AboutPage() {
                 ))}
               </div>
 
-              {/* Center Column: 3D Recycle Graphic */}
+              {/* Center Column: Recycle Graphic */}
               <div className="lg:col-span-4 flex items-center justify-center py-4 sm:py-6 lg:py-0 order-first lg:order-none">
                 <div className="relative w-48 h-48 sm:w-60 sm:h-60 lg:w-72 lg:h-72 flex items-center justify-center">
                   {/* Subtle soft ambient glow behind recycle icon */}
-                  <div className="absolute inset-4 bg-[#16A34A]/8 rounded-full blur-2xl pointer-events-none" />
-                  <Image
-                    src="/images/recycle-3d-transparent.png"
-                    alt="CarCrush24 Circular Scrappage Core Values"
-                    width={280}
-                    height={280}
-                    className="relative z-10 object-contain w-auto h-auto max-w-[200px] sm:max-w-[250px] lg:max-w-[280px] drop-shadow-[0_12px_24px_rgba(22,163,74,0.18)] hover:scale-105 transition-transform duration-500"
-                    priority
-                  />
+                  <div className="absolute inset-4 bg-[#16A34A]/10 rounded-full blur-3xl pointer-events-none" />
+                  <div className="relative z-10 w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 rounded-full bg-gradient-to-br from-[#EAF7EE] via-[#E2F5E7] to-[#D4EED9] border border-[#16A34A]/25 flex items-center justify-center shadow-[0_12px_36px_rgba(22,163,74,0.18)] group hover:scale-105 transition-all duration-500">
+                    <Recycle
+                      className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 text-[#16A34A] transition-transform duration-700 group-hover:rotate-180"
+                      strokeWidth={1.75}
+                    />
+                  </div>
                 </div>
               </div>
 
