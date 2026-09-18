@@ -1,103 +1,44 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import SectionHeader from '../../components/SectionHeader';
+import { HelplineButton } from '../../components/HelplineCallout';
+import { blogs as initialBlogs } from '../../data/blogsData';
 
 export default function BlogsPage() {
+  const [blogs, setBlogs] = useState(initialBlogs);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const categories = ['All', 'Policy & Rules', 'Scrappage Guides', 'Tax & Savings', 'Eco Impact'];
+  const fetchBlogs = useCallback(async () => {
+    try {
+      const res = await fetch('/api/blogs');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data && json.data.length > 0) {
+          setBlogs(json.data);
+        }
+      }
+    } catch {
+      // Fallback stays active gracefully
+    }
+  }, []);
 
-  const blogs = [
-    {
-      id: 1,
-      slug: 'indias-vehicle-scrappage-policy-guide',
-      title: "The Comprehensive Guide to India's Vehicle Scrappage Policy (2024–2025)",
-      excerpt: 'Understand the end-of-life vehicle mandates, the 10-year diesel and 15-year petrol rules in Delhi NCR, and how to stay legally compliant while maximizing your vehicle scrap value.',
-      category: 'Policy & Rules',
-      readTime: '6 min read',
-      date: 'Sept 12, 2026',
-      featured: true,
-      image: '/images/blogs/blog1.jpg',
-      tag: 'MoRTH Compliance',
-    },
-    {
-      id: 2,
-      slug: 'claim-25-percent-road-tax-concession-cod',
-      title: 'How to Claim Up to 25% Motor Vehicle Tax Concession with Certificate of Deposit (CoD)',
-      excerpt: 'Did you know retiring your end-of-life car unlocks massive road-tax rebates on your next new vehicle? Here is a step-by-step walkthrough to redeem your Parivahan CoD voucher.',
-      category: 'Tax & Savings',
-      readTime: '5 min read',
-      date: 'Sept 10, 2026',
-      featured: false,
-      image: '/images/blogs/blog2.jpg',
-      tag: 'Tax Benefits',
-    },
-    {
-      id: 3,
-      slug: 'delhi-ncr-10-15-year-rule-penalties',
-      title: 'Delhi-NCR 10/15-Year Rule: What Happens If Your End-of-Life Vehicle Is Seized?',
-      excerpt: 'Navigating municipal impound yards and police challans is costly. Learn how automated enforcement cameras flag deregistered cars and why proactive RVSF scrappage is your safest choice.',
-      category: 'Policy & Rules',
-      readTime: '4 min read',
-      date: 'Sept 06, 2026',
-      featured: false,
-      image: '/images/blogs/blog3.jpg',
-      tag: 'Legal Advisory',
-    },
-    {
-      id: 4,
-      slug: 'dangers-of-unauthorized-kabadiwala-scrappage',
-      title: 'Why Selling to Unorganized Scrap Yards Exposes You to Chassis Identity Theft',
-      excerpt: 'Local uncertified scrap dealers often resell vehicle chassis numbers to stolen cars or skip RTO deregistrations entirely, leaving original owners legally liable for accidents or crimes.',
-      category: 'Scrappage Guides',
-      readTime: '5 min read',
-      date: 'Aug 29, 2026',
-      featured: false,
-      image: '/images/blogs/blog4.jpg',
-      tag: 'Safety & Fraud',
-    },
-    {
-      id: 5,
-      slug: 'how-to-deregister-car-parivahan-vahan-portal',
-      title: 'Step-by-Step Guide: Complete Vehicle Deregistration on the Parivahan Portal',
-      excerpt: 'A clear guide explaining Form 35, NOC requirements, chassis verification, and how CarCrush24 automates the official RTO cancellation so you never have to visit an RTO office.',
-      category: 'Scrappage Guides',
-      readTime: '7 min read',
-      date: 'Aug 21, 2026',
-      featured: false,
-      image: '/images/blogs/blog6.jpg',
-      tag: 'RTO Guide',
-    },
-    {
-      id: 6,
-      slug: 'environmental-impact-automotive-steel-recycling',
-      title: 'Behind the Industrial Shredder: How CarCrush24 Recycles 90%+ of Automotive Steel',
-      excerpt: 'Explore our scientific 4-stage depollution protocol that prevents hazardous freon gas, battery acids, and engine fluids from contaminating North India’s groundwater.',
-      category: 'Eco Impact',
-      readTime: '4 min read',
-      date: 'Aug 14, 2026',
-      featured: false,
-      image: '/images/blogs/blog5.jpg',
-      tag: 'Circularity',
-    },
-    {
-      id: 7,
-      slug: 'commercial-fleet-scrappage-mandates-2026',
-      title: 'Commercial Fleet Scrappage Mandates: What Truck, Bus & Taxi Operators Must Know',
-      excerpt: 'Government policies now require automated fitness testing and mandatory scrappage for 15+ year commercial fleets. Discover how fleet managers can claim maximum scrap value.',
-      category: 'Policy & Rules',
-      readTime: '6 min read',
-      date: 'Aug 08, 2026',
-      featured: false,
-      image: '/images/blogs/blog7.jpg',
-      tag: 'Fleet Solutions',
-    },
+  useEffect(() => {
+    fetchBlogs();
+    const handleUpdate = () => fetchBlogs();
+    window.addEventListener('blogs_updated', handleUpdate);
+    return () => window.removeEventListener('blogs_updated', handleUpdate);
+  }, [fetchBlogs]);
+
+  // Dynamically derive unique categories from active blogs
+  const categories = [
+    'All',
+    ...Array.from(new Set(blogs.map((b) => b.category).filter(Boolean))),
   ];
 
   const filteredBlogs = blogs.filter((blog) => {
@@ -105,11 +46,11 @@ export default function BlogsPage() {
     const matchesSearch =
       blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       blog.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      blog.tag.toLowerCase().includes(searchQuery.toLowerCase());
+      (blog.tag && blog.tag.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
-  const featuredPost = blogs.find((b) => b.featured) || blogs[0];
+  const featuredPost = blogs.find((b) => b.featured) || blogs[0] || initialBlogs[0];
 
   return (
     <div className="relative min-h-screen flex flex-col bg-[#FBFDFB]">
@@ -165,8 +106,8 @@ export default function BlogsPage() {
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${selectedCategory === cat
-                      ? 'bg-[#188A38] text-white shadow-xs'
-                      : 'bg-white border border-[#E2E8F0] text-[#4B5563] hover:border-[#188A38]/50 hover:text-[#188A38]'
+                    ? 'bg-[#188A38] text-white shadow-xs'
+                    : 'bg-white border border-[#E2E8F0] text-[#4B5563] hover:border-[#188A38]/50 hover:text-[#188A38]'
                     }`}
                 >
                   {cat}
@@ -361,12 +302,10 @@ export default function BlogsPage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto flex-shrink-0">
-                <a
-                  href="tel:1800227278"
-                  className="px-5 py-3 rounded-full bg-[#188A38] hover:bg-[#157831] text-white text-xs font-bold text-center transition-all shadow-xs"
-                >
-                  1800-22-CRUSH
-                </a>
+                <HelplineButton
+                  className="px-5 py-3 rounded-full bg-[#188A38] hover:bg-[#157831] text-white text-xs font-bold text-center transition-all shadow-xs cursor-pointer inline-flex items-center justify-center"
+                  showIcon={false}
+                />
                 <Link
                   href="/quote"
                   className="px-5 py-3 rounded-full bg-white border border-[#D9E2DA] hover:border-[#188A38] text-[#111827] hover:text-[#188A38] text-xs font-bold text-center transition-all"

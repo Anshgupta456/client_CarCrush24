@@ -1,3 +1,6 @@
 node_modules/
 .env
+.env.*
 .DS_Store
+*service-account*.json
+server/config/*.json
