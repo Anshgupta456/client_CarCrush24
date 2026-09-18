@@ -1,55 +1,35 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import SectionHeader from './SectionHeader';
-
-const TESTIMONIALS = [
-  {
-    id: 1,
-    quote:
-      'CarCrush24 made the entire process so easy and hassle-free. From pickup to payment, everything was smooth and professional. Highly recommended for anyone looking to scrap their old vehicle!',
-    author: 'Rohit Sharma',
-    date: 'June 12, 2025',
-  },
-  {
-    id: 2,
-    quote:
-      'I got a fair quote and the pickup was on time. The team was very polite and transparent throughout the process. Great service and a responsible way to recycle vehicles!',
-    author: 'Priya Mehta',
-    date: 'May 28, 2025',
-  },
-  {
-    id: 3,
-    quote:
-      'Professional, reliable, and fast! I was impressed by how well-organized the whole process was. They took care of all the paperwork and gave me the best value for my car.',
-    author: 'Amit Verma',
-    date: 'May 14, 2025',
-  },
-  {
-    id: 4,
-    quote:
-      "Excellent service! The team was friendly and made the scrapping process stress-free. I'll definitely use them again and recommend to others.",
-    author: 'Neha Kapoor',
-    date: 'April 30, 2025',
-  },
-  {
-    id: 5,
-    quote:
-      'Got my Certificate of Vehicle Scrapping (CVS) within hours of pickup. Seamless experience with instant bank transfer payment right on the spot!',
-    author: 'Vikram Malhotra',
-    date: 'April 18, 2025',
-  },
-  {
-    id: 6,
-    quote:
-      'Transparent pricing and no hidden towing charges. The entire pickup from Noida was completed cleanly without any hassle. Truly commendable service.',
-    author: 'Ananya Gupta',
-    date: 'April 05, 2025',
-  },
-];
+import { initialTestimonials as TESTIMONIALS } from '../data/testimonialsData';
 
 export default function TestimonialsSection() {
   const scrollRef = useRef(null);
+  const [testimonials, setTestimonials] = useState(TESTIMONIALS);
+
+  const fetchTestimonials = useCallback(async () => {
+    try {
+      const res = await fetch('/api/testimonials');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data && json.data.length > 0) {
+          setTestimonials(json.data);
+        }
+      }
+    } catch {
+      // Fallback stays active gracefully
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTestimonials();
+
+    // Listen for real-time admin content updates
+    const handleUpdate = () => fetchTestimonials();
+    window.addEventListener('testimonials_updated', handleUpdate);
+    return () => window.removeEventListener('testimonials_updated', handleUpdate);
+  }, [fetchTestimonials]);
 
   const handleScroll = (direction) => {
     if (scrollRef.current) {
@@ -81,7 +61,7 @@ export default function TestimonialsSection() {
           className="flex items-stretch gap-5 overflow-x-auto no-scrollbar scroll-smooth pb-3 -mx-4 px-4 sm:mx-0 sm:px-0"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {TESTIMONIALS.map((t) => (
+          {testimonials.map((t) => (
             <div
               key={t.id}
               className="w-[285px] sm:w-[310px] lg:w-[315px] flex-shrink-0 bg-white rounded-2xl sm:rounded-3xl border border-[#E5E7EB] p-5 sm:p-6 flex flex-col justify-between shadow-[0_2px_14px_rgba(0,0,0,0.02)] hover:shadow-md hover:border-[#188A38]/40 transition-all group"
@@ -93,7 +73,7 @@ export default function TestimonialsSection() {
                 </div>
 
                 {/* Quote Text */}
-                <p className="text-xs sm:text-[13.5px] text-[#4B5563] leading-relaxed">
+                <p className="text-xs sm:text-[13.5px] text-[#4B5563] leading-relaxed line-clamp-4">
                   {t.quote}
                 </p>
               </div>

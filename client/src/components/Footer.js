@@ -3,9 +3,44 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCompany } from '../context/CompanyContext';
 
 export default function Footer() {
+  const { company } = useCompany();
   const currentYear = new Date().getFullYear();
+
+  const hubs = company?.operatingHubs || [
+    'Delhi NCR',
+    'Punjab',
+    'Haryana',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'Jammu & Kashmir',
+    'Chandigarh',
+  ];
+
+  const socialItems = [
+    {
+      name: 'Twitter',
+      href: company?.socialLinks?.twitter || 'https://twitter.com/carcrush24',
+      icon: 'M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z',
+    },
+    {
+      name: 'LinkedIn',
+      href: company?.socialLinks?.linkedin || 'https://linkedin.com/company/carcrush24',
+      icon: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z M4 2a2 2 0 1 1-2 2 2 2 0 0 1 2-2z',
+    },
+    {
+      name: 'Facebook',
+      href: company?.socialLinks?.facebook || 'https://facebook.com/carcrush24',
+      icon: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z',
+    },
+    {
+      name: 'Instagram',
+      href: company?.socialLinks?.instagram || 'https://instagram.com/carcrush24',
+      icon: 'M16 4H8C5.79 4 4 5.79 4 8v8c0 2.21 1.79 4 4 4h8c2.21 0 4-1.79 4-4V8c0-2.21-1.79-4-4-4zm-4 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm4.5-6.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z',
+    },
+  ];
 
   return (
     <footer className="relative bg-[#09120B] text-gray-300 overflow-hidden border-t border-[#1C3621]">
@@ -23,7 +58,7 @@ export default function Footer() {
             <Link href="/" className="inline-block mb-5 hover:opacity-95 transition-opacity">
               <Image
                 src="/images/logo-transparent.png"
-                alt="CarCrush24 - Recycle • Reuse • A Cleaner Tomorrow"
+                alt={`${company?.companyName || 'CarCrush24'} - ${company?.tagline || 'Recycle • Reuse • A Cleaner Tomorrow'}`}
                 width={210}
                 height={36}
                 className="h-8 sm:h-9 w-auto object-contain brightness-105"
@@ -32,7 +67,7 @@ export default function Footer() {
 
             {/* About Company */}
             <p className="text-xs sm:text-[13.5px] text-[#A1B2A5] leading-relaxed max-w-md mb-6 font-normal">
-              CarCrush24 is North India&apos;s leading government-authorized Registered Vehicle Scrapping Facility (RVSF). We make vehicle recycling simple, transparent, and eco-friendly with best scrap value, free doorstep towing, and authentic Certificate of Deposit (CoD) &amp; CVS.
+              {company?.companyName || 'CarCrush24'} is North India&apos;s leading government-authorized Registered Vehicle Scrapping Facility (RVSF). We make vehicle recycling simple, transparent, and eco-friendly with best scrap value, free doorstep towing, and authentic Certificate of Deposit (CoD) &amp; CVS.
             </p>
 
             {/* Address & Contact Details */}
@@ -45,7 +80,7 @@ export default function Footer() {
                   </svg>
                 </div>
                 <span>
-                  <strong className="text-white font-semibold">Corporate Office:</strong> Sector 62, Noida, Delhi NCR, Uttar Pradesh 201309
+                  <strong className="text-white font-semibold">Corporate Office:</strong> {company?.address || 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667'}
                 </span>
               </div>
 
@@ -58,8 +93,11 @@ export default function Footer() {
                 </div>
                 <span>
                   <strong className="text-white font-semibold">Toll-Free Helpline:</strong>{' '}
-                  <a href="tel:1800227278" className="hover:text-[#6FCF3C] transition-colors">
-                    1800-22-CRUSH / +91 98765 43210
+                  <a
+                    href={`tel:${company?.tollFreeTel || '1800227278'}`}
+                    className="hover:text-[#6FCF3C] transition-colors"
+                  >
+                    {company?.tollFreePhone || '1800-22-CRUSH'} {company?.phone ? `/ ${company.phone}` : ''}
                   </a>
                 </span>
               </div>
@@ -73,8 +111,11 @@ export default function Footer() {
                 </div>
                 <span>
                   <strong className="text-white font-semibold">Email:</strong>{' '}
-                  <a href="mailto:support@carcrush24.com" className="hover:text-[#6FCF3C] transition-colors">
-                    support@carcrush24.com
+                  <a
+                    href={`mailto:${company?.email || 'support@carcrush24.com'}`}
+                    className="hover:text-[#6FCF3C] transition-colors"
+                  >
+                    {company?.email || 'support@carcrush24.com'}
                   </a>
                 </span>
               </div>
@@ -82,15 +123,12 @@ export default function Footer() {
 
             {/* Social Icons */}
             <div className="flex items-center gap-3.5 mt-6">
-              {[
-                { name: 'Twitter', icon: 'M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z' },
-                { name: 'LinkedIn', icon: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z M4 2a2 2 0 1 1-2 2 2 2 0 0 1 2-2z' },
-                { name: 'Facebook', icon: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z' },
-                { name: 'Instagram', icon: 'M16 4H8C5.79 4 4 5.79 4 8v8c0 2.21 1.79 4 4 4h8c2.21 0 4-1.79 4-4V8c0-2.21-1.79-4-4-4zm-4 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm4.5-6.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z' },
-              ].map((item) => (
+              {socialItems.map((item) => (
                 <a
                   key={item.name}
-                  href={`#${item.name.toLowerCase()}`}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={item.name}
                   className="w-8 h-8 rounded-full bg-white/5 border border-white/10 hover:border-[#6FCF3C] hover:bg-[#188A38]/30 hover:text-[#6FCF3C] text-gray-400 flex items-center justify-center transition-all"
                 >
@@ -151,34 +189,12 @@ export default function Footer() {
                 Operating Hubs
               </h3>
               <ul className="space-y-2 text-xs sm:text-[13px] text-[#A1B2A5]">
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#6FCF3C]" />
-                  <span>Delhi NCR</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#6FCF3C]" />
-                  <span>Punjab</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#6FCF3C]" />
-                  <span>Haryana</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#6FCF3C]" />
-                  <span>Uttar Pradesh</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#6FCF3C]" />
-                  <span>Uttarakhand</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#6FCF3C]" />
-                  <span>Jammu &amp; Kashmir</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#6FCF3C]" />
-                  <span>Chandigarh</span>
-                </li>
+                {hubs.map((hub) => (
+                  <li key={hub} className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#6FCF3C]" />
+                    <span>{hub}</span>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -192,7 +208,11 @@ export default function Footer() {
           {/* Copyright Line */}
           <div>
             <p>
-              &copy; {currentYear} <strong className="text-white font-semibold">CarCrush24</strong>. All rights reserved. Registered Vehicle Scrapping Facility (RVSF).
+              &copy; {currentYear}{' '}
+              <strong className="text-white font-semibold">
+                {company?.companyName || 'CarCrush24'}
+              </strong>
+              {company?.legalName ? ` (${company.legalName})` : ''}. All rights reserved. Registered Vehicle Scrapping Facility (RVSF).
             </p>
           </div>
 
@@ -206,8 +226,20 @@ export default function Footer() {
               Terms &amp; Conditions
             </Link>
             <span className="text-[#324D37]">•</span>
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new CustomEvent('open_cookie_preferences'));
+                }
+              }}
+              className="hover:text-[#6FCF3C] transition-colors cursor-pointer text-xs"
+            >
+              Cookie Preferences
+            </button>
+            <span className="text-[#324D37]">•</span>
             <span className="text-[#A1B2A5] font-medium">
-              Recycle • Reuse • A Cleaner Tomorrow
+              {company?.tagline || 'Recycle • Reuse • A Cleaner Tomorrow'}
             </span>
           </div>
 
@@ -217,3 +249,4 @@ export default function Footer() {
     </footer>
   );
 }
+

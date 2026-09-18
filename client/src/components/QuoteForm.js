@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useCompany } from '../context/CompanyContext';
+import { trackVisitorEvent } from './GoogleAnalytics';
 
 // Lightweight SVGs for the 3 Individual & 3 Commercial vehicle types
 const Icons = {
@@ -74,6 +76,8 @@ const POPULAR_MAKES = {
 };
 
 export default function QuoteForm({ isStandalone = false, className = '' }) {
+  const { company } = useCompany();
+
   // Main Category: 'personal' vs 'commercial'
   const [clientType, setClientType] = useState('personal');
 
@@ -82,14 +86,11 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
 
   // Form State
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    city: 'Delhi NCR',
-    postalCode: '',
     vehicleNumber: '',
-    year: '2016',
-    make: 'Maruti Suzuki',
+    year: '',
+    make: '',
     model: '',
+    variant: '',
     fuel: 'Petrol',
     mileage: '50,000 - 100,000 km',
     runs: 'Yes, starts & drives',
@@ -123,15 +124,92 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const getWhatsAppNumber = () => {
+    return company?.whatsappNumber || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '917310242424';
+  };
+
+  const buildWhatsAppUrl = (data) => {
+    const num = getWhatsAppNumber();
+    const vehicleSummary =
+      `${data.year || ''} ${data.make || ''} ${data.model || ''}`.trim() || 'Vehicle details';
+    const text = `🚗 *New Vehicle Scrappage Quote Request*
+• *Customer:* ${data.name || 'Customer'}
+• *Phone:* ${data.phone || 'N/A'}
+• *Vehicle:* ${vehicleSummary}
+• *Reg Number:* ${data.vehicleNumber || 'Not specified'}
+• *Category:* ${clientType.toUpperCase()} • ${vehicleType.toUpperCase()}
+• *Fuel:* ${data.fuel || 'N/A'}
+• *Condition:* ${data.runs || 'End-of-Life'}
+• *Mileage:* ${data.mileage || 'N/A'}
+• *Location:* ${data.city || 'Delhi NCR'} ${data.postalCode ? `(${data.postalCode})` : ''}
+• *Timeline:* ${data.pickupTimeline || 'Standard'}`.trim();
+
+    return `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission to backend / team
-    setTimeout(() => {
+    const vehicleSummary =
+      `${formData.year || ''} ${formData.make || ''} ${formData.model || ''}`.trim() ||
+      'Vehicle details';
+
+    const payload = {
+      customerName: formData.name,
+      name: formData.name,
+      phone: formData.phone,
+      location: formData.city,
+      city: formData.city,
+      pincode: formData.postalCode,
+      postalCode: formData.postalCode,
+      regNumber: formData.vehicleNumber || 'PENDING-REG',
+      vehicleNumber: formData.vehicleNumber,
+      vehicleType: `${clientType === 'commercial' ? 'Commercial' : 'Personal'} ${vehicleType.toUpperCase()}`,
+      clientType,
+      vehicleMakeModel: vehicleSummary,
+      year: formData.year,
+      make: formData.make,
+      model: formData.model,
+      fuel: formData.fuel,
+      mileage: formData.mileage,
+      condition: formData.runs,
+      runs: formData.runs,
+      pickupTimeline: formData.pickupTimeline,
+    };
+
+    try {
+      // 1. Post to API to save inquiry on Admin Panel
+      await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('leads_updated'));
+      }
+
+      // Track conversion in Google Analytics and server telemetry
+      trackVisitorEvent('quote_form_submit', {
+        category: 'Conversion',
+        label: `${formData.make} ${formData.model} (${formData.vehicleType})`,
+        value: Number(estimatedPrice?.avg || 0),
+        location: formData.city || 'Delhi NCR',
+        city: formData.city || 'Delhi NCR',
+      });
+    } catch (err) {
+      console.warn('[QuoteForm] API submission warning:', err.message);
+    } finally {
       setIsSubmitting(false);
       setIsSubmitted(true);
-    }, 600);
+
+      // 2. Open WhatsApp click-to-chat with formatted vehicle quote message
+      const waUrl = buildWhatsAppUrl(formData);
+      if (typeof window !== 'undefined') {
+        window.open(waUrl, '_blank', 'noopener,noreferrer');
+      }
+    }
   };
 
   const handleResetForm = () => {
@@ -159,9 +237,8 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
   if (isSubmitted) {
     return (
       <div className={`w-full ${isStandalone ? 'max-w-xl' : 'max-w-[430px]'} mx-auto ${className}`}>
-        <div className={`bg-white rounded-3xl border border-[#E4E7DE] shadow-xl text-[#131A15] transition-all text-center ${
-          isStandalone ? 'p-8 sm:p-10' : 'p-5 sm:p-6'
-        }`}>
+        <div className={`bg-white rounded-3xl border border-[#E4E7DE] shadow-xl text-[#131A15] transition-all text-center ${isStandalone ? 'p-8 sm:p-10' : 'p-5 sm:p-6'
+          }`}>
           {/* Circular Green Checkmark Icon */}
           <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-[3.5px] border-[#22c55e] flex items-center justify-center mx-auto text-[#22c55e] bg-green-50/70 mb-4 shadow-sm">
             <svg className="w-8 h-8 sm:w-10 sm:h-10 text-[#22c55e]" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
@@ -176,7 +253,7 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
 
           {/* Subtitle Message */}
           <p className="text-[#5B6660] text-sm mt-2 max-w-sm mx-auto leading-relaxed">
-            Thank you, <span className="font-bold text-[#131A15]">{formData.name || 'valued customer'}</span>. Our vehicle scrap appraiser is analyzing current metal indices and will contact you within <strong className="text-[#188A38]">15 minutes</strong> with the highest guaranteed payout.
+            Thank you, <span className="font-bold text-[#131A15]">{formData.name || 'valued customer'}</span>. Your inquiry has been sent to our appraisal desk and logged in our operations portal. An appraiser will contact you shortly with guaranteed scrap payouts.
           </p>
 
           {/* Submitted Summary Info */}
@@ -210,7 +287,7 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
           {/* WhatsApp Fast-Track Button */}
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
-              href={`https://wa.me/919876543210?text=Hi%20CarCrush24,%20I%20just%20submitted%20a%20quote%20request%20for%20my%20vehicle%20${encodeURIComponent(formData.vehicleNumber || formData.make)}.%20Please%20share%20the%20valuation.`}
+              href={buildWhatsAppUrl(formData)}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm shadow-md transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
@@ -218,7 +295,7 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                 <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.905.814 2.802.814h.001c3.18 0 5.767-2.586 5.768-5.766 0-3.18-2.587-5.766-5.775-5.766zm8.81 5.766c-.003 4.877-3.968 8.841-8.847 8.841-1.503 0-2.978-.38-4.281-1.099l-4.713 1.236 1.258-4.592c-.789-1.374-1.205-2.946-1.206-4.546.003-4.878 3.969-8.842 8.848-8.842 2.363 0 4.584.92 6.255 2.593 1.671 1.673 2.586 3.902 2.586 6.368z" />
               </svg>
-              <span>Fast-Track on WhatsApp</span>
+              <span>Chat / Send Photos on WhatsApp</span>
             </a>
 
             <button
@@ -239,7 +316,7 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
     return (
       <div className={`w-full ${className}`}>
         <div className="bg-white rounded-3xl shadow-[0_16px_40px_rgba(0,0,0,0.06)] border border-[#E4E7DE] p-5 sm:p-7 md:p-8 text-[#131A15]">
-          
+
           {/* Header Switcher: 2 Options (Individual vs Commercial) */}
           <div className="mb-5">
             <div className="text-[11px] font-bold text-[#5B6660] uppercase tracking-wider mb-2 flex items-center justify-between">
@@ -250,11 +327,10 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
               <button
                 type="button"
                 onClick={() => handleClientTypeChange('personal')}
-                className={`py-2.5 px-3 text-xs sm:text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                  clientType === 'personal'
+                className={`py-2.5 px-3 text-xs sm:text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${clientType === 'personal'
                     ? 'bg-white text-[#131A15] shadow-sm font-extrabold border border-black/5'
                     : 'text-[#5B6660] hover:text-[#131A15]'
-                }`}
+                  }`}
               >
                 <span>Individual / Personal</span>
               </button>
@@ -262,11 +338,10 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
               <button
                 type="button"
                 onClick={() => handleClientTypeChange('commercial')}
-                className={`py-2.5 px-3 text-xs sm:text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                  clientType === 'commercial'
+                className={`py-2.5 px-3 text-xs sm:text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${clientType === 'commercial'
                     ? 'bg-white text-[#131A15] shadow-sm font-extrabold border border-black/5'
                     : 'text-[#5B6660] hover:text-[#131A15]'
-                }`}
+                  }`}
               >
                 <span>Commercial / Fleet</span>
               </button>
@@ -288,19 +363,17 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
                     key={tab.id}
                     type="button"
                     onClick={() => handleVehicleTypeChange(tab.id)}
-                    className={`flex flex-col items-center justify-center py-3 px-2 rounded-2xl transition-all relative cursor-pointer ${
-                      isSelected
+                    className={`flex flex-col items-center justify-center py-3 px-2 rounded-2xl transition-all relative cursor-pointer ${isSelected
                         ? 'bg-white border-2 border-[#188A38] shadow-sm text-[#188A38]'
                         : 'bg-[#F8F9F5] border border-[#E4E7DE] text-[#6B7770] hover:bg-[#EEF1EB] hover:text-[#131A15]'
-                    }`}
+                      }`}
                   >
                     <div className={`transition-transform duration-150 ${isSelected ? 'scale-110 text-[#188A38]' : 'text-current'}`}>
                       <IconComponent />
                     </div>
 
-                    <span className={`text-[11px] sm:text-xs font-black tracking-wider mt-1.5 uppercase leading-tight ${
-                      isSelected ? 'text-[#131A15]' : 'text-[#6B7770]'
-                    }`}>
+                    <span className={`text-[11px] sm:text-xs font-black tracking-wider mt-1.5 uppercase leading-tight ${isSelected ? 'text-[#131A15]' : 'text-[#6B7770]'
+                      }`}>
                       {tab.label}
                     </span>
 
@@ -679,11 +752,10 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
             <button
               type="button"
               onClick={() => handleClientTypeChange('personal')}
-              className={`py-1.5 px-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                clientType === 'personal'
+              className={`py-1.5 px-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${clientType === 'personal'
                   ? 'bg-white text-[#131A15] shadow-sm font-extrabold border border-black/5'
                   : 'text-[#5B6660] hover:text-[#131A15]'
-              }`}
+                }`}
             >
               <span>Individual / Personal</span>
             </button>
@@ -691,11 +763,10 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
             <button
               type="button"
               onClick={() => handleClientTypeChange('commercial')}
-              className={`py-1.5 px-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                clientType === 'commercial'
+              className={`py-1.5 px-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${clientType === 'commercial'
                   ? 'bg-white text-[#131A15] shadow-sm font-extrabold border border-black/5'
                   : 'text-[#5B6660] hover:text-[#131A15]'
-              }`}
+                }`}
             >
               <span>Commercial / Fleet</span>
             </button>
@@ -714,19 +785,17 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
                   key={tab.id}
                   type="button"
                   onClick={() => handleVehicleTypeChange(tab.id)}
-                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all relative ${
-                    isSelected
+                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all relative ${isSelected
                       ? 'bg-white border-2 border-[#131A15] shadow-sm text-[#131A15]'
                       : 'bg-[#F4F6F1] border border-transparent text-[#6B7770] hover:bg-[#EAEFE6] hover:text-[#131A15]'
-                  }`}
+                    }`}
                 >
                   <div className={`transition-transform duration-150 ${isSelected ? 'scale-105 text-[#1F5C33]' : 'text-current'}`}>
                     <IconComponent />
                   </div>
 
-                  <span className={`text-[10px] font-extrabold tracking-wider mt-1 uppercase leading-tight ${
-                    isSelected ? 'text-[#131A15]' : 'text-[#6B7770]'
-                  }`}>
+                  <span className={`text-[10px] font-extrabold tracking-wider mt-1 uppercase leading-tight ${isSelected ? 'text-[#131A15]' : 'text-[#6B7770]'
+                    }`}>
                     {tab.label}
                   </span>
 

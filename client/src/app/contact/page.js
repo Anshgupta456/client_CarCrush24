@@ -5,8 +5,10 @@ import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import SectionHeader from '../../components/SectionHeader';
+import { useCompany } from '../../context/CompanyContext';
 
 export default function ContactPage() {
+  const { company } = useCompany();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -43,10 +45,48 @@ export default function ContactPage() {
     },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.phone) return;
+
+    const waNum = company?.whatsappNumber || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '917310242424';
+    const waText = `📩 *New Website Inquiry (${formData.inquiryType})*
+• *Name:* ${formData.name}
+• *Phone:* ${formData.phone}
+• *Email:* ${formData.email || 'N/A'}
+• *City:* ${formData.city || 'Delhi NCR'}
+• *Reg / Vehicle:* ${formData.vehicleNumber || 'Not provided'}
+• *Category:* ${formData.inquiryType}
+• *Message:* ${formData.message || 'No additional note'}`.trim();
+
+    try {
+      await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          location: formData.city || 'Delhi NCR',
+          regNumber: formData.vehicleNumber || 'ENQUIRY',
+          vehicleMakeModel: formData.inquiryType,
+          vehicleType: 'Other',
+          notes: formData.message || formData.inquiryType,
+        }),
+      });
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('leads_updated'));
+      }
+    } catch (err) {
+      console.warn('[Contact] Error submitting inquiry:', err);
+    }
+
     setSubmitted(true);
+
+    if (typeof window !== 'undefined') {
+      window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(waText)}`, '_blank', 'noopener,noreferrer');
+    }
   };
 
   return (
@@ -97,10 +137,10 @@ export default function ContactPage() {
               </div>
               <div className="mt-5 pt-3 border-t border-gray-100">
                 <a
-                  href="tel:1800227278"
+                  href={`tel:${company?.tollFreeTel || '1800227278'}`}
                   className="text-sm font-black text-[#188A38] hover:underline flex items-center gap-1.5"
                 >
-                  <span>1800-22-CRUSH</span>
+                  <span>{company?.tollFreePhone || '1800-22-CRUSH'}</span>
                   <span>→</span>
                 </a>
                 <span className="text-[11px] text-[#9CA3AF] block mt-0.5">Toll-free across India</span>
@@ -122,7 +162,7 @@ export default function ContactPage() {
               </div>
               <div className="mt-5 pt-3 border-t border-gray-100">
                 <a
-                  href="https://wa.me/919876543210"
+                  href={`https://wa.me/${company?.whatsappNumber || '917310242424'}?text=${encodeURIComponent('Hi CarCrush24, I want to scrap my vehicle and get a certified quote.')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm font-black text-[#188A38] hover:underline flex items-center gap-1.5"
@@ -149,10 +189,10 @@ export default function ContactPage() {
               </div>
               <div className="mt-5 pt-3 border-t border-gray-100">
                 <a
-                  href="mailto:support@carcrush24.com"
+                  href={`mailto:${company?.email || 'support@carcrush24.com'}`}
                   className="text-sm font-black text-[#188A38] hover:underline flex items-center gap-1.5"
                 >
-                  <span>support@carcrush24.com</span>
+                  <span>{company?.email || 'support@carcrush24.com'}</span>
                   <span>→</span>
                 </a>
                 <span className="text-[11px] text-[#9CA3AF] block mt-0.5">Monitored 24/7</span>
@@ -169,18 +209,18 @@ export default function ContactPage() {
                 </div>
                 <h3 className="text-base font-black text-[#111827] tracking-tight">HQ &amp; Facility</h3>
                 <p className="text-xs text-[#6B7280] mt-1 leading-relaxed">
-                  Sector 62, Electronic City, Noida, Delhi-NCR, UP 201309.
+                  {company?.address || 'Sector 62, Electronic City, Noida, Delhi-NCR, UP 201309.'}
                 </p>
               </div>
               <div className="mt-5 pt-3 border-t border-gray-100">
                 <a
-                  href="tel:1800227278"
+                  href={`tel:${company?.phoneTel || company?.tollFreeTel || '1800227278'}`}
                   className="text-sm font-black text-[#188A38] hover:underline flex items-center gap-1.5"
                 >
-                  <span>1800-22-CRUSH</span>
+                  <span>{company?.phone || company?.tollFreePhone || '1800-22-CRUSH'}</span>
                   <span>→</span>
                 </a>
-                <span className="text-[11px] text-[#9CA3AF] block mt-0.5">Open 7 days a week</span>
+                <span className="text-[11px] text-[#9CA3AF] block mt-0.5">{company?.operatingHours || 'Open 7 days a week'}</span>
               </div>
             </div>
 
@@ -442,10 +482,10 @@ export default function ContactPage() {
                   </Link>
 
                   <a
-                    href="tel:1800227278"
+                    href={`tel:${company?.tollFreeTel || '1800227278'}`}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-white font-bold text-sm sm:text-base tracking-tight transition-all cursor-pointer"
                   >
-                    <span>1800-22-CRUSH</span>
+                    <span>{company?.tollFreePhone || '1800-22-CRUSH'}</span>
                   </a>
                 </div>
               </div>

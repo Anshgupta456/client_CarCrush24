@@ -14,8 +14,10 @@ import {
   Truck, 
   Percent 
 } from 'lucide-react';
+import { useCompany } from '../../context/CompanyContext';
 
 export default function QuotePage() {
+  const { company } = useCompany();
   const [openFaq, setOpenFaq] = useState(null);
 
   const toggleFaq = (index) => {
@@ -282,7 +284,7 @@ export default function QuotePage() {
 
                     <div className="flex flex-col sm:flex-row items-center gap-2.5">
                       <a
-                        href="https://wa.me/919876543210?text=Hi%20CarCrush24,%20I%20want%20to%20get%20an%20instant%20quote%20for%20my%20vehicle."
+                        href={`https://wa.me/${company?.whatsappNumber || '917310242424'}?text=Hi%20CarCrush24,%20I%20want%20to%20get%20an%20instant%20quote%20for%20my%20vehicle.`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm transition-all cursor-pointer"

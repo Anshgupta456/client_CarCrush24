@@ -1,5 +1,6 @@
 import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
+import Providers from "../components/Providers";
 
 const poppins = Poppins({
   weight: ["400", "500", "600", "700", "800"],
@@ -34,7 +35,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/carcrush.ico" sizes="any" />
       </head>
       <body className="min-h-full flex flex-col font-sans bg-[#F8F9F5] text-[#131A15]">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
