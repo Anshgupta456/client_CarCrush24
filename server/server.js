@@ -1,7 +1,7 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 
 // Routers
@@ -14,8 +14,6 @@ import companyRoutes from './routes/companyRoutes.js';
 import policyRoutes from './routes/policyRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import { getBlogs, getBlogBySlug, getTestimonials } from './controllers/contentController.js';
-
-dotenv.config();
 
 const app = express();
 
@@ -43,7 +41,9 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
+const bodyLimit = process.env.BODY_LIMIT || '50mb';
+app.use(express.json({ limit: bodyLimit }));
+app.use(express.urlencoded({ extended: true, limit: bodyLimit }));
 app.use(cookieParser());
 
 // Connect Database & Seed

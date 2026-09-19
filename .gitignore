@@ -1,6 +1,7 @@
 node_modules/
 .env
 .env.*
+!.env.example
 .DS_Store
 *service-account*.json
 server/config/*.json
