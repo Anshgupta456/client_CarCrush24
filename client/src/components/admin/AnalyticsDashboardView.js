@@ -256,11 +256,11 @@ export default function AnalyticsDashboardView() {
               {kpis.totalVisitors ? kpis.totalVisitors.toLocaleString() : '0'}
             </span>
             <span className="text-xs font-semibold text-[#188A38] flex items-center gap-0.5">
-              <ArrowUpRight className="w-3.5 h-3.5" /> +16.2%
+              <ArrowUpRight className="w-3.5 h-3.5" /> Live
             </span>
           </div>
           <span className="text-[11px] text-[#5B6660] mt-1 block">
-            {kpis.activeUsers ? kpis.activeUsers.toLocaleString() : '0'} active engagement sessions
+            {kpis.totalVisitors ? kpis.totalVisitors.toLocaleString() : '0'} tracked visitor sessions
           </span>
         </div>
 
@@ -274,54 +274,54 @@ export default function AnalyticsDashboardView() {
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-3xl font-bold text-[#188A38] font-heading">
-              {kpis.conversionRate || '3.6%'}
+              {kpis.conversionRate || '0.0%'}
             </span>
             <span className="text-xs font-semibold text-[#188A38] flex items-center gap-0.5">
-              <ArrowUpRight className="w-3.5 h-3.5" /> +2.4%
+              <ArrowUpRight className="w-3.5 h-3.5" /> Real-time
             </span>
           </div>
           <span className="text-[11px] text-[#5B6660] mt-1 block">
-            {kpis.totalLeads} authentic vehicle quote submissions
+            {kpis.totalLeads ?? 0} authentic vehicle quote submissions
           </span>
         </div>
 
         {/* Metric 3 */}
         <div className="bg-white border border-[#E4E7DE] rounded-3xl p-5 sm:p-6 shadow-2xs hover:border-[#1F5C33]/40 transition-all">
           <div className="flex items-center justify-between text-xs text-[#5B6660]">
-            <span className="font-semibold uppercase tracking-wider">Avg Session Quality</span>
+            <span className="font-semibold uppercase tracking-wider">Helpline Inquiries</span>
             <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
               <Clock className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-3xl font-bold text-[#131A15] font-heading">
-              {kpis.avgSessionDuration || '3m 42s'}
+              {kpis.helplineInquiries ?? 0}
             </span>
-            <span className="text-xs text-[#5B6660]">Bounce: {kpis.bounceRate || '29.8%'}</span>
+            <span className="text-xs text-[#5B6660]">WhatsApp &amp; Calls</span>
           </div>
           <span className="text-[11px] text-[#5B6660] mt-1 block">
-            High intent on scrap valuation &amp; CoD tools
+            Direct clicks on WhatsApp chat and phone lines
           </span>
         </div>
 
         {/* Metric 4 */}
         <div className="bg-white border border-[#E4E7DE] rounded-3xl p-5 sm:p-6 shadow-2xs hover:border-[#1F5C33]/40 transition-all">
           <div className="flex items-center justify-between text-xs text-[#5B6660]">
-            <span className="font-semibold uppercase tracking-wider">CoD Certificates Released</span>
+            <span className="font-semibold uppercase tracking-wider">Pipeline Active Leads</span>
             <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <FileCheck className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-3xl font-bold text-[#131A15] font-heading">
-              {kpis.codGenerated || '14'}
+              {kpis.inProgressLeads ?? 0}
             </span>
             <span className="text-xs font-semibold text-emerald-600 flex items-center gap-0.5">
-              <CheckCircle2 className="w-3.5 h-3.5" /> 100% Valid
+              <CheckCircle2 className="w-3.5 h-3.5" /> Progressed
             </span>
           </div>
           <span className="text-[11px] text-[#5B6660] mt-1 block">
-            Struck off MoRTH Parivahan successfully
+            {kpis.newLeads ?? 0} new leads waiting in pipeline
           </span>
         </div>
       </div>
@@ -333,15 +333,15 @@ export default function AnalyticsDashboardView() {
             <div className="flex items-center gap-2">
               <Layers className="w-4 h-4 text-[#1F5C33]" />
               <h2 className="text-base font-bold text-[#131A15] font-heading">
-                End-to-End Vehicle Scrappage Conversion Funnel
+                Customer Acquisition &amp; Scrappage Funnel
               </h2>
             </div>
             <p className="text-xs text-[#5B6660] mt-0.5">
-              Tracks visitor progression from initial landing to final Certificate of Deposit (CoD) issuance. Click any step for detailed breakdown.
+              Tracks live visitor progression from initial landing to quote calculation, lead submission, and pipeline qualification.
             </p>
           </div>
           <span className="text-[11px] font-semibold text-[#1F5C33] bg-[#1F5C33]/10 px-3 py-1 rounded-full self-start sm:self-auto">
-            Overall Funnel Efficiency: {kpis.conversionRate || '3.6%'}
+            Overall Funnel Efficiency: {kpis.conversionRate || '0.0%'}
           </span>
         </div>
 
@@ -461,7 +461,7 @@ export default function AnalyticsDashboardView() {
           </div>
 
           <p className="text-[11px] text-[#5B6660] italic pt-2 border-t border-[#E4E7DE]">
-            * Geolocation derived from Google Analytics 4 sessions and Parivahan vehicle registration postal coordinates.
+            * Location data derived from customer submitted vehicle quotes and visitor telemetry sessions.
           </p>
         </div>
 
