@@ -30,12 +30,15 @@ function getAnalyticsClient() {
         keyFile = defaultConfigKeyPath;
       }
 
+      const clientEmail = process.env.GOOGLE_CLIENT_EMAIL || process.env.GA4_CLIENT_EMAIL;
+      const privateKey = process.env.GOOGLE_PRIVATE_KEY || process.env.GA4_PRIVATE_KEY;
+
       if (keyFile) {
         options.keyFilename = keyFile;
-      } else if (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
+      } else if (clientEmail && privateKey) {
         options.credentials = {
-          client_email: process.env.GOOGLE_CLIENT_EMAIL,
-          private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+          client_email: clientEmail,
+          private_key: privateKey.replace(/\\n/g, '\n'),
         };
       }
       analyticsClient = new BetaAnalyticsDataClient(options);
@@ -128,12 +131,17 @@ export const getAnalyticsData = async (timeRange = '30d') => {
   const leads = store.leads || [];
   const events = store.analyticsEvents || recentEventsBuffer;
 
-  const propertyId = process.env.GA_PROPERTY_ID || process.env.NEXT_PUBLIC_GA_PROPERTY_ID || null;
+  const propertyId =
+    process.env.GA_PROPERTY_ID ||
+    process.env.GA4_PROPERTY_ID ||
+    process.env.NEXT_PUBLIC_GA_PROPERTY_ID ||
+    null;
   const isGAConnected = Boolean(
     propertyId &&
     (process.env.GOOGLE_APPLICATION_CREDENTIALS ||
       fs.existsSync(defaultConfigKeyPath) ||
-      process.env.GOOGLE_CLIENT_EMAIL)
+      process.env.GOOGLE_CLIENT_EMAIL ||
+      process.env.GA4_CLIENT_EMAIL)
   );
 
   // Determine date boundaries
