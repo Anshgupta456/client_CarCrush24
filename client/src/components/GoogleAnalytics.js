@@ -4,21 +4,21 @@ import React, { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
 
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-CC24ANALYTICS';
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const STORAGE_KEY = 'carcrush_cookie_consent';
 
-// Helper to track user actions both in Google Analytics and backend telemetry
+// Helper to track user actions: Internal tracker receives all events; GA4 receives lightweight hits
 export const trackVisitorEvent = async (eventName, params = {}) => {
   if (typeof window === 'undefined') return;
 
-  // 1. Google Analytics gtag event
-  if (typeof window.gtag === 'function') {
+  // 1. Google Analytics gtag event (optional mirror if GA4 is enabled)
+  if (typeof window.gtag === 'function' && GA_MEASUREMENT_ID) {
     try {
       window.gtag('event', eventName, params);
     } catch {}
   }
 
-  // 2. Server-side event tracking for reliable admin funnel analytics
+  // 2. Primary Server-Side Internal Tracker (AdBlock-proof, direct database telemetry)
   try {
     const payload = {
       eventName,
@@ -43,21 +43,20 @@ export const trackVisitorEvent = async (eventName, params = {}) => {
 export default function GoogleAnalytics() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [hasConsent, setHasConsent] = useState(false);
+  const [hasConsent, setHasConsent] = useState(true);
 
   useEffect(() => {
-    let timer;
-    // Check initial cookie consent
+    // Check cookie consent preferences
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        const consent = Boolean(parsed.analytics);
-        timer = setTimeout(() => setHasConsent(consent), 0);
+        if (parsed.analytics !== undefined) {
+          setHasConsent(Boolean(parsed.analytics));
+        }
       }
     } catch {}
 
-    // Listen for cookie consent updates
     const handleConsentUpdate = (e) => {
       const detail = e.detail || {};
       setHasConsent(Boolean(detail.analytics));
@@ -65,16 +64,24 @@ export default function GoogleAnalytics() {
 
     window.addEventListener('cookie_consent_updated', handleConsentUpdate);
     return () => {
-      if (timer) clearTimeout(timer);
       window.removeEventListener('cookie_consent_updated', handleConsentUpdate);
     };
   }, []);
 
-  // Track page views on route changes
+  // Track page views on route changes for SEO search landing analytics
   useEffect(() => {
     if (!pathname) return;
     const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '');
 
+    // Send page_view to GA4 for SEO keyword/landing attribution
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function' && GA_MEASUREMENT_ID) {
+      window.gtag('config', GA_MEASUREMENT_ID, {
+        page_path: url,
+        page_title: document.title || 'CarCrush24',
+      });
+    }
+
+    // Send to internal tracker
     trackVisitorEvent('page_view', {
       page_path: url,
       page_title: document.title || 'CarCrush24',
@@ -82,7 +89,8 @@ export default function GoogleAnalytics() {
     });
   }, [pathname, searchParams]);
 
-  if (!hasConsent || !GA_MEASUREMENT_ID) {
+  // Don't render GA script if no real measurement ID is provided or user rejected consent
+  if (!GA_MEASUREMENT_ID || !hasConsent) {
     return null;
   }
 
@@ -102,7 +110,8 @@ export default function GoogleAnalytics() {
             gtag('js', new Date());
             gtag('config', '${GA_MEASUREMENT_ID}', {
               page_path: window.location.pathname,
-              anonymize_ip: true
+              anonymize_ip: true,
+              send_page_view: true
             });
           `,
         }}
