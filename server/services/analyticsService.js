@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
-import { readStore, writeStore, isMongoConnected } from './dbStore.js';
+import { readStore, writeStore, isMongoConnected, getStoredLeads } from './dbStore.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -125,11 +125,22 @@ async function runGADataReport(propertyId, dateRange) {
   }
 }
 
-// Compute comprehensive funnel & analytics payload
+// Compute comprehensive funnel & analytics payload from REAL platform data
 export const getAnalyticsData = async (timeRange = '30d') => {
+  // 1. Fetch real leads from MongoDB or fallback local store
+  let leads = [];
+  try {
+    leads = await getStoredLeads();
+  } catch (err) {
+    const store = readStore();
+    leads = store.leads || [];
+  }
+
+  // 2. Fetch real recorded telemetry events
   const store = readStore();
-  const leads = store.leads || [];
-  const events = store.analyticsEvents || recentEventsBuffer;
+  const allEvents = (store.analyticsEvents && store.analyticsEvents.length > 0)
+    ? store.analyticsEvents
+    : recentEventsBuffer;
 
   const propertyId =
     process.env.GA_PROPERTY_ID ||
@@ -149,34 +160,61 @@ export const getAnalyticsData = async (timeRange = '30d') => {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
 
-  // Filter stored leads by range
+  // Filter actual leads by timeRange
   const filteredLeads = leads.filter((l) => {
     const d = l.createdAt ? new Date(l.createdAt) : new Date();
     return d >= cutoff;
   });
 
-  // Calculate actual funnel counts from database leads
-  const totalLeads = filteredLeads.length || 18;
-  const newLeads = filteredLeads.filter((l) => l.status === 'new').length;
-  const scheduledLeads = filteredLeads.filter((l) => l.status === 'scheduled').length;
-  const collectedLeads = filteredLeads.filter((l) => l.status === 'collected' || l.status === 'paid').length;
-  const paidLeads = filteredLeads.filter((l) => l.status === 'paid').length;
+  // Filter actual tracked events by timeRange
+  const filteredEvents = allEvents.filter((e) => {
+    const d = e.timestamp ? new Date(e.timestamp) : new Date();
+    return d >= cutoff;
+  });
 
-  // Calibrate baseline visitors and engagements from actual activity
-  const multiplier = days === 7 ? 1 : days === 90 ? 11 : days === 365 ? 42 : 4;
-  const baseVisitors = Math.max(1240 * multiplier, totalLeads * 55);
-  const quoteEngaged = Math.max(Math.round(baseVisitors * 0.38), totalLeads * 4);
-  const leadsGenerated = Math.max(totalLeads, Math.round(quoteEngaged * 0.22));
-  const scheduledTowing = Math.max(scheduledLeads + collectedLeads + paidLeads, Math.round(leadsGenerated * 0.58));
-  const codIssued = Math.max(collectedLeads + paidLeads, Math.round(scheduledTowing * 0.85));
+  // --- Real Counts ---
+  // Page views & visitors
+  const pageViewEvents = filteredEvents.filter((e) => e.eventName === 'page_view');
+  const uniqueVisitorIps = new Set(filteredEvents.map((e) => `${e.source}_${e.device}_${e.page || ''}`)).size;
+  const totalVisitors = Math.max(pageViewEvents.length, uniqueVisitorIps, filteredLeads.length);
 
-  // Funnel Stages Definition
+  // Quote calculator interactions
+  const quoteEngagedEvents = filteredEvents.filter(
+    (e) =>
+      e.eventName === 'quote_calculator_submit' ||
+      e.eventName === 'quote_form_submit' ||
+      e.eventName === 'calculator_engaged'
+  );
+  const quoteEngaged = Math.max(quoteEngagedEvents.length, filteredLeads.length);
+
+  // Real database leads count
+  const totalLeadsCount = filteredLeads.length;
+
+  // Direct helpline contact actions (WhatsApp & Phone calls)
+  const whatsappClicks = filteredEvents.filter(
+    (e) => e.eventName === 'whatsapp_chat_click' || (e.label && e.label.toLowerCase().includes('whatsapp'))
+  ).length;
+  const phoneClicks = filteredEvents.filter(
+    (e) => e.eventName === 'phone_call_click' || (e.label && e.label.toLowerCase().includes('phone'))
+  ).length;
+  const totalHelplineInquiries = whatsappClicks + phoneClicks;
+
+  // Pipeline status breakdown from real leads
+  const newLeadsCount = filteredLeads.filter((l) => !l.status || l.status === 'new').length;
+  const inProgressLeads = filteredLeads.filter(
+    (l) => l.status === 'contacted' || l.status === 'scheduled' || l.status === 'collected' || l.status === 'paid'
+  ).length;
+
+  // Real conversion rate
+  const conversionRate = totalVisitors > 0 ? ((totalLeadsCount / totalVisitors) * 100).toFixed(1) + '%' : '0.0%';
+
+  // 5-Stage Real Customer Acquisition Funnel
   const funnelStages = [
     {
       id: 'step_visitors',
       name: '1. Website Visitors',
-      description: 'Unique visitors arriving via search & direct links',
-      count: baseVisitors,
+      description: 'Tracked page views & visitor discovery sessions',
+      count: totalVisitors,
       percentage: 100,
       dropOff: 0,
       color: '#1F5C33',
@@ -186,181 +224,209 @@ export const getAnalyticsData = async (timeRange = '30d') => {
       name: '2. Quote Calculator Engaged',
       description: 'Interacted with vehicle type, weight & scrap pricing',
       count: quoteEngaged,
-      percentage: Math.round((quoteEngaged / baseVisitors) * 100),
-      dropOff: Math.round(((baseVisitors - quoteEngaged) / baseVisitors) * 100),
+      percentage: totalVisitors > 0 ? Math.min(100, Math.round((quoteEngaged / totalVisitors) * 100)) : 0,
+      dropOff: totalVisitors > 0 ? Math.max(0, Math.round(((totalVisitors - quoteEngaged) / totalVisitors) * 100)) : 0,
       color: '#188A38',
     },
     {
       id: 'step_leads',
       name: '3. Valuation Submitted (Leads)',
-      description: 'RC / phone numbers submitted for doorstep pickup',
-      count: leadsGenerated,
-      percentage: Math.round((leadsGenerated / baseVisitors) * 100),
-      dropOff: Math.round(((quoteEngaged - leadsGenerated) / quoteEngaged) * 100),
+      description: 'Authentic vehicle quote submissions in database',
+      count: totalLeadsCount,
+      percentage: totalVisitors > 0 ? Math.min(100, Math.round((totalLeadsCount / totalVisitors) * 100)) : 0,
+      dropOff: quoteEngaged > 0 ? Math.max(0, Math.round(((quoteEngaged - totalLeadsCount) / quoteEngaged) * 100)) : 0,
       color: '#6FCF3C',
     },
     {
-      id: 'step_scheduled',
-      name: '4. Free Towing Scheduled',
-      description: 'Hydraulic recovery dispatched to customer doorstep',
-      count: scheduledTowing,
-      percentage: Math.round((scheduledTowing / baseVisitors) * 100),
-      dropOff: Math.round(((leadsGenerated - scheduledTowing) / leadsGenerated) * 100),
+      id: 'step_helpline',
+      name: '4. Direct Helpline Inquiries',
+      description: 'Direct WhatsApp chats & helpline phone calls initiated',
+      count: totalHelplineInquiries,
+      percentage: totalVisitors > 0 ? Math.min(100, Math.round((totalHelplineInquiries / totalVisitors) * 100)) : 0,
+      dropOff: 0,
       color: '#F59E0B',
     },
     {
-      id: 'step_cod',
-      name: '5. Scrapped & CoD Issued',
-      description: 'Vehicle struck off Parivahan & Certificate of Deposit released',
-      count: codIssued,
-      percentage: Math.round((codIssued / baseVisitors) * 100),
-      dropOff: Math.round(((scheduledTowing - codIssued) / scheduledTowing) * 100),
+      id: 'step_pipeline',
+      name: '5. Pipeline Qualified & Progressed',
+      description: 'Leads processed by admin (contacted, scheduled, or collected)',
+      count: inProgressLeads,
+      percentage: totalLeadsCount > 0 ? Math.min(100, Math.round((inProgressLeads / totalLeadsCount) * 100)) : 0,
+      dropOff: totalLeadsCount > 0 ? Math.max(0, Math.round(((totalLeadsCount - inProgressLeads) / totalLeadsCount) * 100)) : 0,
       color: '#10B981',
     },
   ];
 
-  // Geographic Breakdown (Where visitors are searching & coming from)
-  const geographicData = [
-    {
-      state: 'Uttarakhand',
-      city: 'Roorkee (HQ)',
-      visitors: Math.round(baseVisitors * 0.28),
-      leads: Math.round(leadsGenerated * 0.32),
-      share: '28%',
-      conversionRate: '4.8%',
-    },
-    {
-      state: 'Delhi NCR',
-      city: 'Delhi (Central & West)',
-      visitors: Math.round(baseVisitors * 0.24),
-      leads: Math.round(leadsGenerated * 0.22),
-      share: '24%',
-      conversionRate: '3.9%',
-    },
-    {
-      state: 'Uttar Pradesh',
-      city: 'Noida / Greater Noida',
-      visitors: Math.round(baseVisitors * 0.18),
-      leads: Math.round(leadsGenerated * 0.16),
-      share: '18%',
-      conversionRate: '3.7%',
-    },
-    {
-      state: 'Haryana',
-      city: 'Gurugram / Faridabad',
-      visitors: Math.round(baseVisitors * 0.14),
-      leads: Math.round(leadsGenerated * 0.15),
-      share: '14%',
-      conversionRate: '4.5%',
-    },
-    {
-      state: 'Punjab',
-      city: 'Chandigarh / Mohali',
-      visitors: Math.round(baseVisitors * 0.10),
-      leads: Math.round(leadsGenerated * 0.09),
-      share: '10%',
-      conversionRate: '3.8%',
-    },
-    {
-      state: 'Other Hubs',
-      city: 'Haridwar / Dehradun',
-      visitors: Math.round(baseVisitors * 0.06),
-      leads: Math.round(leadsGenerated * 0.06),
-      share: '6%',
-      conversionRate: '4.2%',
-    },
-  ];
+  // Real Geographic breakdown by lead location & events
+  const regionMap = {};
+  filteredLeads.forEach((l) => {
+    const loc = (l.location || 'Delhi NCR').trim();
+    if (!regionMap[loc]) {
+      regionMap[loc] = { leads: 0, visitors: 0 };
+    }
+    regionMap[loc].leads += 1;
+    regionMap[loc].visitors += 1;
+  });
 
-  // Traffic Acquisition Sources
+  filteredEvents.forEach((e) => {
+    const loc = (e.region || e.city || e.location || '').trim();
+    if (loc) {
+      if (!regionMap[loc]) {
+        regionMap[loc] = { leads: 0, visitors: 0 };
+      }
+      regionMap[loc].visitors += 1;
+    }
+  });
+
+  // Default core regions if empty
+  const standardHubs = ['Uttarakhand', 'Delhi NCR', 'Uttar Pradesh', 'Haryana', 'Punjab'];
+  standardHubs.forEach((hub) => {
+    if (!regionMap[hub]) {
+      regionMap[hub] = { leads: 0, visitors: 0 };
+    }
+  });
+
+  const geographicData = Object.entries(regionMap)
+    .map(([region, stat]) => {
+      const regVisitors = Math.max(stat.visitors, stat.leads);
+      const sharePct = totalVisitors > 0 ? Math.round((regVisitors / totalVisitors) * 100) : 0;
+      const convRate = regVisitors > 0 ? ((stat.leads / regVisitors) * 100).toFixed(1) + '%' : '0.0%';
+      return {
+        state: region,
+        city: region.includes('Uttarakhand') ? 'Roorkee (HQ)' : region,
+        visitors: regVisitors,
+        leads: stat.leads,
+        share: `${sharePct}%`,
+        conversionRate: convRate,
+      };
+    })
+    .sort((a, b) => b.leads - a.leads || b.visitors - a.visitors)
+    .slice(0, 6);
+
+  // Real Traffic Acquisition Channels based on event referrer/source
+  let organicCount = 0;
+  let directCount = 0;
+  let whatsappReferrals = 0;
+  let socialCount = 0;
+
+  filteredEvents.forEach((e) => {
+    const s = (e.source || 'Direct').toLowerCase();
+    if (s.includes('google') || s.includes('search') || s.includes('bing')) {
+      organicCount++;
+    } else if (s.includes('whatsapp') || s.includes('wa.me')) {
+      whatsappReferrals++;
+    } else if (
+      s.includes('instagram') ||
+      s.includes('facebook') ||
+      s.includes('linkedin') ||
+      s.includes('twitter')
+    ) {
+      socialCount++;
+    } else {
+      directCount++;
+    }
+  });
+
+  // If no tracked events exist yet, attribute based on total visitors
+  if (organicCount + directCount + whatsappReferrals + socialCount === 0 && totalVisitors > 0) {
+    directCount = totalVisitors;
+  }
+
+  const totalSources = organicCount + directCount + whatsappReferrals + socialCount || 1;
   const trafficSources = [
     {
       channel: 'Google Organic Search',
       medium: 'organic',
-      sessions: Math.round(baseVisitors * 0.54),
-      percentage: 54,
-      bounceRate: '32.4%',
-      topKeywords: [
-        'car scrappage facility roorkee',
-        'authorized rvsf parivahan uttarakhand',
-        'certificate of deposit car tax rebate',
-        'scrap 15 year petrol car delhi ncr',
-      ],
+      sessions: organicCount,
+      percentage: Math.round((organicCount / totalSources) * 100),
+      bounceRate: 'N/A',
+      topKeywords: ['vehicle scrappage', 'scrap car roorkee', 'parivahan certificate'],
     },
     {
       channel: 'Direct / Bookmarks',
-      medium: 'none',
-      sessions: Math.round(baseVisitors * 0.22),
-      percentage: 22,
-      bounceRate: '28.1%',
-      topKeywords: ['carcrush24.com', 'garhwal scrape'],
+      medium: 'direct',
+      sessions: directCount,
+      percentage: Math.round((directCount / totalSources) * 100),
+      bounceRate: 'N/A',
+      topKeywords: ['carcrush.anshikagupta.online', 'direct domain entry'],
     },
     {
-      channel: 'WhatsApp & Referral Links',
+      channel: 'WhatsApp Helpline & Chat Links',
       medium: 'referral',
-      sessions: Math.round(baseVisitors * 0.16),
-      percentage: 16,
-      bounceRate: '21.5%',
-      topKeywords: ['whatsapp click-to-chat', 'towing dispatch share'],
+      sessions: whatsappReferrals + whatsappClicks,
+      percentage: Math.round(((whatsappReferrals + whatsappClicks) / totalSources) * 100),
+      bounceRate: 'N/A',
+      topKeywords: ['whatsapp click-to-chat', 'quote inquiry direct'],
     },
     {
-      channel: 'Social & Industry Portals',
+      channel: 'Social & External Portals',
       medium: 'social',
-      sessions: Math.round(baseVisitors * 0.08),
-      percentage: 8,
-      bounceRate: '42.0%',
-      topKeywords: ['linkedin company/carcrush24', 'instagram vehicle guides'],
+      sessions: socialCount,
+      percentage: Math.round((socialCount / totalSources) * 100),
+      bounceRate: 'N/A',
+      topKeywords: ['linkedin/carcrush24', 'instagram profile link'],
     },
   ];
 
-  // Top User Actions performed on the website
+  // Top User Actions (100% genuine counts from actual events)
+  const actionCounts = {};
+  filteredEvents.forEach((e) => {
+    const key = e.eventName || 'page_view';
+    actionCounts[key] = (actionCounts[key] || 0) + 1;
+  });
+
   const userActions = [
     {
       event: 'quote_calculator_submit',
-      label: 'Instant Scrap Quote Computed',
+      label: 'Instant Scrap Quote Submissions',
       category: 'Conversion',
-      count: quoteEngaged,
-      growth: '+18.4%',
+      count: actionCounts['quote_calculator_submit'] || actionCounts['quote_form_submit'] || totalLeadsCount,
+      growth: '+Live',
     },
     {
       event: 'whatsapp_chat_click',
       label: 'WhatsApp Helpline Click-to-Chat',
       category: 'Inquiry',
-      count: Math.round(quoteEngaged * 0.45),
-      growth: '+24.1%',
+      count: actionCounts['whatsapp_chat_click'] || whatsappClicks,
+      growth: '+Live',
     },
     {
       event: 'phone_call_click',
       label: 'Toll-Free Helpline Call Initiated',
       category: 'Inquiry',
-      count: Math.round(quoteEngaged * 0.32),
-      growth: '+12.6%',
+      count: actionCounts['phone_call_click'] || phoneClicks,
+      growth: '+Live',
     },
     {
-      event: 'cod_tax_benefit_view',
-      label: 'Certificate of Deposit (CoD) Rebate Checked',
-      category: 'Engagement',
-      count: Math.round(baseVisitors * 0.42),
-      growth: '+31.0%',
-    },
-    {
-      event: 'blog_legal_guide_read',
-      label: 'MoRTH Policy & RVSF Rule Guide Read',
+      event: 'page_view',
+      label: 'Website Page Impressions',
       category: 'Content',
-      count: Math.round(baseVisitors * 0.26),
-      growth: '+15.2%',
+      count: actionCounts['page_view'] || pageViewEvents.length || totalVisitors,
+      growth: '+Live',
     },
   ];
 
-  // Daily Trend for charts (last 7 or 14 points)
+  // Daily Trend Points (real daily counts of leads & events)
   const trendPoints = Array.from({ length: 14 }).map((_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (13 - i));
-    const dayName = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    const factor = 0.8 + Math.sin(i / 2) * 0.3;
+    const dayStr = d.toDateString();
+    const dayLabel = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+    const dayLeads = filteredLeads.filter((l) => {
+      const ld = l.createdAt ? new Date(l.createdAt) : null;
+      return ld && ld.toDateString() === dayStr;
+    }).length;
+
+    const dayEvents = filteredEvents.filter((e) => {
+      const ed = e.timestamp ? new Date(e.timestamp) : null;
+      return ed && ed.toDateString() === dayStr;
+    }).length;
+
     return {
-      date: dayName,
-      visitors: Math.round((baseVisitors / days) * factor),
-      leads: Math.max(1, Math.round((leadsGenerated / days) * factor)),
+      date: dayLabel,
+      visitors: dayEvents,
+      leads: dayLeads,
     };
   });
 
@@ -370,23 +436,23 @@ export const getAnalyticsData = async (timeRange = '30d') => {
       days,
       generatedAt: new Date().toISOString(),
       isGAConnected,
-      propertyId: propertyId || 'Not Configured (Running in Dynamic Telemetry Mode)',
-      mode: isGAConnected ? 'Google Analytics 4 Data API' : 'Dynamic Hybrid Telemetry',
+      propertyId: propertyId || 'Internal Telemetry Active (GA4 Optional)',
+      mode: isGAConnected ? 'Google Analytics 4 Data API' : 'Live Platform Telemetry',
     },
     kpis: {
-      totalVisitors: baseVisitors,
-      activeUsers: Math.round(baseVisitors * 0.72),
-      totalLeads: leadsGenerated,
-      conversionRate: ((leadsGenerated / baseVisitors) * 100).toFixed(2) + '%',
-      avgSessionDuration: '3m 42s',
-      bounceRate: '29.8%',
-      codGenerated: codIssued,
+      totalVisitors,
+      activeUsers: totalVisitors,
+      totalLeads: totalLeadsCount,
+      conversionRate,
+      helplineInquiries: totalHelplineInquiries,
+      inProgressLeads,
+      newLeads: newLeadsCount,
     },
     funnel: funnelStages,
     geographic: geographicData,
     trafficSources,
     userActions,
     trend: trendPoints,
-    recentLiveEvents: events.slice(0, 15),
+    recentLiveEvents: filteredEvents.slice(0, 15),
   };
 };
