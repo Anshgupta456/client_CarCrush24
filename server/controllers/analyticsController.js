@@ -51,11 +51,17 @@ export const trackEvent = async (req, res) => {
 // Admin Protected: Check Google Analytics Data API configuration status
 export const getAnalyticsStatus = async (req, res) => {
   try {
-    const propertyId = process.env.GA_PROPERTY_ID || process.env.NEXT_PUBLIC_GA_PROPERTY_ID || null;
+    const propertyId =
+      process.env.GA_PROPERTY_ID ||
+      process.env.GA4_PROPERTY_ID ||
+      process.env.NEXT_PUBLIC_GA_PROPERTY_ID ||
+      null;
+    const clientEmail = process.env.GOOGLE_CLIENT_EMAIL || process.env.GA4_CLIENT_EMAIL;
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY || process.env.GA4_PRIVATE_KEY;
     const hasServiceAccount = Boolean(
       process.env.GOOGLE_APPLICATION_CREDENTIALS ||
       fs.existsSync(defaultConfigKeyPath) ||
-      (process.env.GOOGLE_CLIENT_EMAIL && process.env.GOOGLE_PRIVATE_KEY)
+      (clientEmail && privateKey)
     );
 
     return res.status(200).json({
