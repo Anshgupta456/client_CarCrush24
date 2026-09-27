@@ -6,6 +6,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import SectionHeader from '../../components/SectionHeader';
 import { useCompany } from '../../context/CompanyContext';
+import { trackVisitorEvent } from '../../components/GoogleAnalytics';
 
 export default function ContactPage() {
   const { company } = useCompany();
@@ -54,7 +55,7 @@ export default function ContactPage() {
 • *Name:* ${formData.name}
 • *Phone:* ${formData.phone}
 • *Email:* ${formData.email || 'N/A'}
-• *City:* ${formData.city || 'Delhi NCR'}
+• *City:* ${formData.city || 'Not specified'}
 • *Reg / Vehicle:* ${formData.vehicleNumber || 'Not provided'}
 • *Category:* ${formData.inquiryType}
 • *Message:* ${formData.message || 'No additional note'}`.trim();
@@ -67,7 +68,7 @@ export default function ContactPage() {
           customerName: formData.name,
           phone: formData.phone,
           email: formData.email,
-          location: formData.city || 'Delhi NCR',
+          location: formData.city || '',
           regNumber: formData.vehicleNumber || 'ENQUIRY',
           vehicleMakeModel: formData.inquiryType,
           vehicleType: 'Other',
@@ -83,6 +84,12 @@ export default function ContactPage() {
     }
 
     setSubmitted(true);
+
+    trackVisitorEvent('whatsapp_chat_click', {
+      category: 'Inquiry',
+      label: 'Contact Form WhatsApp Submission',
+      location: formData.city || 'Delhi NCR',
+    });
 
     if (typeof window !== 'undefined') {
       window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(waText)}`, '_blank', 'noopener,noreferrer');
@@ -165,6 +172,12 @@ export default function ContactPage() {
                   href={`https://wa.me/${company?.whatsappNumber || '917310242424'}?text=${encodeURIComponent('Hi CarCrush24, I want to scrap my vehicle and get a certified quote.')}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => {
+                    trackVisitorEvent('whatsapp_chat_click', {
+                      category: 'Inquiry',
+                      label: 'Contact Page WhatsApp Desk Link',
+                    });
+                  }}
                   className="text-sm font-black text-[#188A38] hover:underline flex items-center gap-1.5"
                 >
                   <span>Chat on WhatsApp</span>

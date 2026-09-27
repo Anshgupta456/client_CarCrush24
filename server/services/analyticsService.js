@@ -260,7 +260,12 @@ export const getAnalyticsData = async (timeRange = '30d') => {
   // Real Geographic breakdown by lead location & events
   const regionMap = {};
   filteredLeads.forEach((l) => {
-    const loc = (l.location || 'Delhi NCR').trim();
+    let loc = (l.location || '').trim();
+    if (!loc && l.pincode) {
+      loc = `Pin: ${l.pincode}`;
+    } else if (!loc) {
+      loc = 'Other Region';
+    }
     if (!regionMap[loc]) {
       regionMap[loc] = { leads: 0, visitors: 0 };
     }
