@@ -16,12 +16,10 @@ import {
   FileCheck,
   PhoneCall,
   MessageSquare,
-  Sparkles,
   Info,
   Calendar,
   CheckCircle2,
   AlertTriangle,
-  Zap,
   Activity,
   Layers,
   Clock,
@@ -36,7 +34,6 @@ export default function AnalyticsDashboardView() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [showGASetup, setShowGASetup] = useState(false);
   const [selectedFunnelStep, setSelectedFunnelStep] = useState(null);
 
   const fetchAnalyticsData = useCallback(async (range, isManual = false) => {
@@ -105,8 +102,25 @@ export default function AnalyticsDashboardView() {
     }
 
     loadData();
+
+    const handleEventTracked = () => {
+      loadData();
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('analytics_event_tracked', handleEventTracked);
+    }
+
+    const intervalId = setInterval(() => {
+      loadData();
+    }, 15000);
+
     return () => {
       ignore = true;
+      clearInterval(intervalId);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('analytics_event_tracked', handleEventTracked);
+      }
     };
   }, [timeRange, token]);
 
@@ -183,63 +197,8 @@ export default function AnalyticsDashboardView() {
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-[#1F5C33]' : ''}`} />
           </button>
-
-          <button
-            onClick={() => setShowGASetup(!showGASetup)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white border border-[#E4E7DE] hover:border-[#1F5C33]/50 text-xs font-semibold text-[#131A15] transition-all shadow-2xs cursor-pointer"
-          >
-            <Zap className="w-3.5 h-3.5 text-[#F59E0B]" />
-            <span>GA4 Config</span>
-          </button>
         </div>
       </div>
-
-      {/* GA4 Setup Drawer Modal */}
-      {showGASetup && (
-        <div className="bg-[#112317] text-white border border-[#1C3621] rounded-3xl p-6 sm:p-7 shadow-md animate-fadeIn space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#6FCF3C]" />
-              <h3 className="text-sm font-bold font-heading text-white">
-                Google Analytics 4 Data API Integration Status
-              </h3>
-            </div>
-            <button
-              onClick={() => setShowGASetup(false)}
-              className="text-xs text-[#A1B2A5] hover:text-white underline cursor-pointer"
-            >
-              Close
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
-              <span className="text-[11px] text-[#A1B2A5] uppercase tracking-wider block font-semibold">
-                Active Telemetry Bridge
-              </span>
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#6FCF3C] animate-pulse" />
-                <span className="text-sm font-bold text-white">{meta.mode || 'Google Analytics 4 Data API'}</span>
-              </div>
-              <p className="text-[11.5px] text-[#C5D4C9] leading-relaxed">
-                Client events (quotes computed, helpline dials, WhatsApp chats) are captured instantly and synchronized into the conversion funnel.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
-              <span className="text-[11px] text-[#A1B2A5] uppercase tracking-wider block font-semibold">
-                Direct Cloud Credentials Setup
-              </span>
-              <p className="text-[11.5px] text-[#C5D4C9] leading-relaxed">
-                To connect directly with your dedicated Google Cloud console, provide <code className="text-[#6FCF3C] font-mono">GA_PROPERTY_ID</code> and service account credentials in <code className="text-gray-200">server/.env</code>.
-              </p>
-              <div className="text-[10.5px] text-[#A1B2A5] pt-1">
-                Property ID Status: <strong className="text-white font-mono">{meta.propertyId}</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Top Metric KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

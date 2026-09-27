@@ -11,9 +11,8 @@ const leadSchema = new mongoose.Schema(
     },
     vehicleType: {
       type: String,
-      required: true,
-      enum: ['Car (Sedan)', 'Car (Hatchback)', 'SUV', 'Commercial Truck', 'Two-Wheeler', 'Other'],
-      default: 'Car (Sedan)',
+      default: 'Car',
+      trim: true,
     },
     vehicleMakeModel: {
       type: String,
@@ -30,7 +29,8 @@ const leadSchema = new mongoose.Schema(
     },
     location: {
       type: String,
-      required: true,
+      required: false,
+      default: '',
       trim: true,
     },
     pincode: {

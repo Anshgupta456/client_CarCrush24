@@ -86,6 +86,10 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
 
   // Form State
   const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    city: isStandalone ? 'Delhi NCR' : '',
+    postalCode: '',
     vehicleNumber: '',
     year: '',
     make: '',
@@ -141,7 +145,7 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
 • *Fuel:* ${data.fuel || 'N/A'}
 • *Condition:* ${data.runs || 'End-of-Life'}
 • *Mileage:* ${data.mileage || 'N/A'}
-• *Location:* ${data.city || 'Delhi NCR'} ${data.postalCode ? `(${data.postalCode})` : ''}
+${data.city && data.postalCode ? `• *Location:* ${data.city} (${data.postalCode})` : data.city ? `• *Location:* ${data.city}` : data.postalCode ? `• *Pickup Pincode:* ${data.postalCode}` : ''}
 • *Timeline:* ${data.pickupTimeline || 'Standard'}`.trim();
 
     return `https://wa.me/${num}?text=${encodeURIComponent(text)}`;
@@ -159,10 +163,10 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
       customerName: formData.name,
       name: formData.name,
       phone: formData.phone,
-      location: formData.city,
-      city: formData.city,
-      pincode: formData.postalCode,
-      postalCode: formData.postalCode,
+      location: formData.city || '',
+      city: formData.city || '',
+      pincode: formData.postalCode || '',
+      postalCode: formData.postalCode || '',
       regNumber: formData.vehicleNumber || 'PENDING-REG',
       vehicleNumber: formData.vehicleNumber,
       vehicleType: `${clientType === 'commercial' ? 'Commercial' : 'Personal'} ${vehicleType.toUpperCase()}`,
@@ -180,11 +184,16 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
 
     try {
       // 1. Post to API to save inquiry on Admin Panel
-      await fetch('/api/leads', {
+      const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        console.warn('[QuoteForm] API submission warning:', errData.error || res.statusText);
+      }
 
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('leads_updated'));
@@ -195,8 +204,8 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
         category: 'Conversion',
         label: `${formData.make} ${formData.model} (${formData.vehicleType})`,
         value: Number(estimatedPrice?.avg || 0),
-        location: formData.city || 'Delhi NCR',
-        city: formData.city || 'Delhi NCR',
+        location: formData.city || (formData.postalCode ? `Pin: ${formData.postalCode}` : ''),
+        city: formData.city || '',
       });
     } catch (err) {
       console.warn('[QuoteForm] API submission warning:', err.message);
@@ -206,6 +215,11 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
 
       // 2. Open WhatsApp click-to-chat with formatted vehicle quote message
       const waUrl = buildWhatsAppUrl(formData);
+      trackVisitorEvent('whatsapp_chat_click', {
+        category: 'Inquiry',
+        label: 'Quote Form Auto-Open WhatsApp',
+        location: formData.city || (formData.postalCode ? `Pin: ${formData.postalCode}` : 'Delhi NCR'),
+      });
       if (typeof window !== 'undefined') {
         window.open(waUrl, '_blank', 'noopener,noreferrer');
       }
@@ -217,7 +231,7 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
     setFormData({
       name: '',
       phone: '',
-      city: 'Delhi NCR',
+      city: isStandalone ? 'Delhi NCR' : '',
       postalCode: '',
       vehicleNumber: '',
       year: '2016',
@@ -276,10 +290,16 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
                 <span className="font-semibold text-[#131A15]">{formData.phone}</span>
               </div>
             )}
-            {formData.postalCode && (
+            {(formData.city || formData.postalCode) && (
               <div className="flex items-center justify-between">
-                <span className="text-[#7A867F]">Pickup Location:</span>
-                <span className="font-semibold text-[#131A15]">{formData.city} ({formData.postalCode})</span>
+                <span className="text-[#7A867F]">
+                  {formData.city ? 'Pickup Location:' : 'Pickup Pincode:'}
+                </span>
+                <span className="font-semibold text-[#131A15]">
+                  {formData.city && formData.postalCode
+                    ? `${formData.city} (${formData.postalCode})`
+                    : formData.city || `PIN: ${formData.postalCode}`}
+                </span>
               </div>
             )}
           </div>
@@ -290,12 +310,19 @@ export default function QuoteForm({ isStandalone = false, className = '' }) {
               href={buildWhatsAppUrl(formData)}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                trackVisitorEvent('whatsapp_chat_click', {
+                  category: 'Inquiry',
+                  label: 'Quote Form Modal WhatsApp Button',
+                  location: formData.city || (formData.postalCode ? `Pin: ${formData.postalCode}` : 'Delhi NCR'),
+                });
+              }}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm shadow-md transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
             >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.905.814 2.802.814h.001c3.18 0 5.767-2.586 5.768-5.766 0-3.18-2.587-5.766-5.775-5.766zm8.81 5.766c-.003 4.877-3.968 8.841-8.847 8.841-1.503 0-2.978-.38-4.281-1.099l-4.713 1.236 1.258-4.592c-.789-1.374-1.205-2.946-1.206-4.546.003-4.878 3.969-8.842 8.848-8.842 2.363 0 4.584.92 6.255 2.593 1.671 1.673 2.586 3.902 2.586 6.368z" />
+              <svg className="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24">
+                <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2zm0 18.09c-1.52 0-3.02-.41-4.32-1.18l-.31-.18-3.2.84.85-3.12-.2-.32c-.85-1.35-1.3-2.93-1.3-4.52 0-4.52 3.68-8.2 8.2-8.2 2.19 0 4.25.85 5.8 2.4 1.55 1.55 2.4 3.61 2.4 5.8 0 4.52-3.68 8.2-8.2 8.2zm4.5-6.15c-.25-.12-1.46-.72-1.69-.8-.23-.08-.39-.12-.56.12-.17.25-.64.8-.79.97-.14.17-.29.19-.54.07-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.57.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z" />
               </svg>
-              <span>Chat / Send Photos on WhatsApp</span>
+              <span>Send photos on whatsapp</span>
             </a>
 
             <button

@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCompany } from '../context/CompanyContext';
+import { trackVisitorEvent } from './GoogleAnalytics';
 
 export default function Footer() {
   const { company } = useCompany();
@@ -95,6 +96,12 @@ export default function Footer() {
                   <strong className="text-white font-semibold">Toll-Free Helpline:</strong>{' '}
                   <a
                     href={`tel:${company?.tollFreeTel || '1800227278'}`}
+                    onClick={() => {
+                      trackVisitorEvent('phone_call_click', {
+                        category: 'Inquiry',
+                        label: 'Footer Toll-Free Call',
+                      });
+                    }}
                     className="hover:text-[#6FCF3C] transition-colors"
                   >
                     {company?.tollFreePhone || '1800-22-CRUSH'} {company?.phone ? `/ ${company.phone}` : ''}

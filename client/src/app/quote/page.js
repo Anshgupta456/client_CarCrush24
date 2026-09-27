@@ -15,6 +15,7 @@ import {
   Percent 
 } from 'lucide-react';
 import { useCompany } from '../../context/CompanyContext';
+import { trackVisitorEvent } from '../../components/GoogleAnalytics';
 
 export default function QuotePage() {
   const { company } = useCompany();
@@ -287,6 +288,12 @@ export default function QuotePage() {
                         href={`https://wa.me/${company?.whatsappNumber || '917310242424'}?text=Hi%20CarCrush24,%20I%20want%20to%20get%20an%20instant%20quote%20for%20my%20vehicle.`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => {
+                          trackVisitorEvent('whatsapp_chat_click', {
+                            category: 'Inquiry',
+                            label: 'Quote Page Assistance WhatsApp Button',
+                          });
+                        }}
                         className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm transition-all cursor-pointer"
                       >
                         <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">

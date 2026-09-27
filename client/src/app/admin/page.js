@@ -45,6 +45,7 @@ import { useCompany } from '../../context/CompanyContext';
 import AdminProfileView from '../../components/admin/AdminProfileView';
 import CompanyProfileView from '../../components/admin/CompanyProfileView';
 import AnalyticsDashboardView from '../../components/admin/AnalyticsDashboardView';
+import { trackVisitorEvent } from '../../components/GoogleAnalytics';
 
 export default function AdminDashboardPage() {
   const {
@@ -74,12 +75,14 @@ export default function AdminDashboardPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState('all'); // 'all', 'today', 'yesterday', 'last7', 'last30', 'thisMonth', 'custom'
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
 
   // Blog CMS states
   const [blogSearch, setBlogSearch] = useState('');
   const [blogCategoryFilter, setBlogCategoryFilter] = useState('all');
   const [previewBlog, setPreviewBlog] = useState(null);
-
 
   // Testimonials CMS states
   const [testimonialSearch, setTestimonialSearch] = useState('');
@@ -94,22 +97,158 @@ export default function AdminDashboardPage() {
     rating: 5,
   });
 
+  // Helper to test if a lead's createdAt is within date filter range
+  const isDateInRange = (dateString, filterKey, startCustom, endCustom) => {
+    if (filterKey === 'all') return true;
+    if (!dateString) return false;
+
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return false;
+
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+    if (filterKey === 'today') {
+      return d >= startOfToday && d <= endOfToday;
+    }
+    if (filterKey === 'yesterday') {
+      const startOfYesterday = new Date(startOfToday);
+      startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+      const endOfYesterday = new Date(startOfToday.getTime() - 1);
+      return d >= startOfYesterday && d <= endOfYesterday;
+    }
+    if (filterKey === 'last7') {
+      const sevenDaysAgo = new Date(startOfToday);
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+      return d >= sevenDaysAgo && d <= endOfToday;
+    }
+    if (filterKey === 'last30') {
+      const thirtyDaysAgo = new Date(startOfToday);
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
+      return d >= thirtyDaysAgo && d <= endOfToday;
+    }
+    if (filterKey === 'thisMonth') {
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+      return d >= startOfMonth && d <= endOfToday;
+    }
+    if (filterKey === 'custom') {
+      if (startCustom) {
+        const s = new Date(startCustom);
+        s.setHours(0, 0, 0, 0);
+        if (d < s) return false;
+      }
+      if (endCustom) {
+        const e = new Date(endCustom);
+        e.setHours(23, 59, 59, 999);
+        if (d > e) return false;
+      }
+      return true;
+    }
+    return true;
+  };
+
+  // Helper to format lead submission date cleanly
+  const formatLeadDate = (dateString) => {
+    if (!dateString) return '—';
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return '—';
+
+    const now = new Date();
+    const isToday =
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear();
+
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    const isYesterday =
+      d.getDate() === yesterday.getDate() &&
+      d.getMonth() === yesterday.getMonth() &&
+      d.getFullYear() === yesterday.getFullYear();
+
+    if (isToday) return 'Today';
+    if (isYesterday) return 'Yesterday';
+
+    return d.toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
+  const formatLeadTime = (dateString) => {
+    if (!dateString) return '';
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return '';
+
+    return d.toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
+
+  const formatFullDateTime = (dateString) => {
+    if (!dateString) return 'Not available';
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+
+    return d.toLocaleString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
+
+  // Helper for determining whether location is user-selected or erroneously defaulted
+  const getLeadLocationDisplay = (lead) => {
+    if (!lead) return { location: '', pincode: '', hasLocation: false, hasPincode: false };
+    const pin = (lead.pincode || '').trim();
+    // If location is 'Delhi NCR' but pincode does not start with 11 (Delhi), it was an erroneously defaulted entry from hero form
+    const isFalseDelhiDefault =
+      lead.location === 'Delhi NCR' &&
+      pin &&
+      !pin.startsWith('11');
+
+    const loc = isFalseDelhiDefault ? '' : (lead.location || '').trim();
+
+    return {
+      location: loc,
+      pincode: pin,
+      hasLocation: Boolean(loc),
+      hasPincode: Boolean(pin),
+    };
+  };
+
   // Filtered Leads calculation
-  const filteredLeads = leads.filter((lead) => {
-    const matchesSearch =
-      lead.regNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.phone?.includes(searchTerm) ||
-      lead.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.vehicleMakeModel?.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredLeads = leads
+    .filter((lead) => {
+      const matchesSearch =
+        lead.regNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        lead.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        lead.phone?.includes(searchTerm) ||
+        lead.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        lead.pincode?.includes(searchTerm) ||
+        lead.vehicleMakeModel?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
-    const matchesType =
-      typeFilter === 'all' ||
-      lead.vehicleType?.toLowerCase().includes(typeFilter.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
+      const matchesType =
+        typeFilter === 'all' ||
+        lead.vehicleType?.toLowerCase().includes(typeFilter.toLowerCase());
 
-    return matchesSearch && matchesStatus && matchesType;
-  });
+      const matchesDate = isDateInRange(lead.createdAt, dateFilter, customStartDate, customEndDate);
+
+      return matchesSearch && matchesStatus && matchesType && matchesDate;
+    })
+    .sort((a, b) => {
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return dateB - dateA;
+    });
 
   // Filtered Blogs
   const filteredBlogs = blogs.filter((blog) => {
@@ -132,14 +271,19 @@ export default function AdminDashboardPage() {
     );
   });
 
+  // Leads within active date filter for accurate status tab counts
+  const dateScopedLeads = leads.filter((lead) =>
+    isDateInRange(lead.createdAt, dateFilter, customStartDate, customEndDate)
+  );
+
   // Counts per status
   const countByStatus = {
-    all: leads.length,
-    new: leads.filter((l) => l.status === 'new').length,
-    contacted: leads.filter((l) => l.status === 'contacted').length,
-    scheduled: leads.filter((l) => l.status === 'scheduled').length,
-    collected: leads.filter((l) => l.status === 'collected').length,
-    paid: leads.filter((l) => l.status === 'paid').length,
+    all: dateScopedLeads.length,
+    new: dateScopedLeads.filter((l) => l.status === 'new').length,
+    contacted: dateScopedLeads.filter((l) => l.status === 'contacted').length,
+    scheduled: dateScopedLeads.filter((l) => l.status === 'scheduled').length,
+    collected: dateScopedLeads.filter((l) => l.status === 'collected').length,
+    paid: dateScopedLeads.filter((l) => l.status === 'paid').length,
   };
 
   const statusBadgeColors = {
@@ -454,12 +598,12 @@ export default function AdminDashboardPage() {
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="relative w-full sm:w-96">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+              <div className="relative w-full lg:w-80">
                 <Search className="w-4 h-4 text-[#5B6660] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
-                  placeholder="Search Reg No, Name, Phone, Location..."
+                  placeholder="Search Reg No, Name, Phone, Pincode..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 rounded-full bg-[#F8F9F5] border border-[#E4E7DE] text-xs text-[#131A15] placeholder:text-[#5B6660] focus:outline-none focus:border-[#1F5C33]"
@@ -474,21 +618,98 @@ export default function AdminDashboardPage() {
                 )}
               </div>
 
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <span className="text-xs text-[#5B6660]">Vehicle:</span>
-                <select
-                  value={typeFilter}
-                  onChange={(e) => setTypeFilter(e.target.value)}
-                  className="py-1.5 px-3 rounded-full bg-[#F8F9F5] border border-[#E4E7DE] text-xs text-[#131A15] focus:outline-none focus:border-[#1F5C33]"
-                >
-                  <option value="all">All Vehicle Types</option>
-                  <option value="car">Cars / Sedans</option>
-                  <option value="suv">SUVs</option>
-                  <option value="truck">Commercial Trucks</option>
-                  <option value="wheeler">Two-Wheelers</option>
-                </select>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Date Filter Dropdown */}
+                <div className="flex items-center gap-1.5 bg-[#F8F9F5] border border-[#E4E7DE] rounded-full px-3 py-1.5 text-xs text-[#131A15]">
+                  <Calendar className="w-3.5 h-3.5 text-[#1F5C33]" />
+                  <span className="text-[#5B6660] font-medium">Date:</span>
+                  <select
+                    value={dateFilter}
+                    onChange={(e) => setDateFilter(e.target.value)}
+                    className="bg-transparent text-xs text-[#131A15] font-bold focus:outline-none cursor-pointer"
+                  >
+                    <option value="all">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="last7">Last 7 Days</option>
+                    <option value="last30">Last 30 Days</option>
+                    <option value="thisMonth">This Month</option>
+                    <option value="custom">Custom Range...</option>
+                  </select>
+                </div>
+
+                {/* Vehicle Type Dropdown */}
+                <div className="flex items-center gap-1.5 bg-[#F8F9F5] border border-[#E4E7DE] rounded-full px-3 py-1.5 text-xs text-[#131A15]">
+                  <span className="text-[#5B6660] font-medium">Vehicle:</span>
+                  <select
+                    value={typeFilter}
+                    onChange={(e) => setTypeFilter(e.target.value)}
+                    className="bg-transparent text-xs text-[#131A15] font-bold focus:outline-none cursor-pointer"
+                  >
+                    <option value="all">All Types</option>
+                    <option value="car">Cars / Sedans</option>
+                    <option value="suv">SUVs</option>
+                    <option value="truck">Commercial Trucks</option>
+                    <option value="wheeler">Two-Wheelers</option>
+                  </select>
+                </div>
+
+                {/* Reset Filters button if any filter is active */}
+                {(dateFilter !== 'all' || typeFilter !== 'all' || searchTerm) && (
+                  <button
+                    onClick={() => {
+                      setDateFilter('all');
+                      setTypeFilter('all');
+                      setSearchTerm('');
+                      setCustomStartDate('');
+                      setCustomEndDate('');
+                    }}
+                    className="text-xs text-[#1F5C33] hover:text-[#188A38] hover:underline font-bold px-2 py-1 cursor-pointer"
+                  >
+                    Reset Filters
+                  </button>
+                )}
               </div>
             </div>
+
+            {/* Custom Date Range Picker inputs when 'custom' is active */}
+            {dateFilter === 'custom' && (
+              <div className="flex flex-wrap items-center gap-2.5 p-3 rounded-2xl bg-[#F8F9F5] border border-[#E4E7DE] text-xs">
+                <span className="text-[#131A15] font-bold flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5 text-[#1F5C33]" />
+                  Custom Date Range:
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#5B6660]">From:</span>
+                  <input
+                    type="date"
+                    value={customStartDate}
+                    onChange={(e) => setCustomStartDate(e.target.value)}
+                    className="bg-white border border-[#DCE1D7] rounded-lg px-2.5 py-1 text-xs font-semibold text-[#131A15] focus:outline-none focus:border-[#1F5C33]"
+                  />
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#5B6660]">To:</span>
+                  <input
+                    type="date"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    className="bg-white border border-[#DCE1D7] rounded-lg px-2.5 py-1 text-xs font-semibold text-[#131A15] focus:outline-none focus:border-[#1F5C33]"
+                  />
+                </div>
+                {(customStartDate || customEndDate) && (
+                  <button
+                    onClick={() => {
+                      setCustomStartDate('');
+                      setCustomEndDate('');
+                    }}
+                    className="text-[11px] text-[#5B6660] hover:text-[#131A15] underline ml-1 cursor-pointer"
+                  >
+                    Clear dates
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="bg-white border border-[#E4E7DE] rounded-3xl overflow-hidden shadow-2xs">
@@ -499,6 +720,7 @@ export default function AdminDashboardPage() {
                     <th className="py-3.5 px-4">Registration & Vehicle</th>
                     <th className="py-3.5 px-4">Customer</th>
                     <th className="py-3.5 px-4">Location</th>
+                    <th className="py-3.5 px-4">Date Submitted</th>
                     <th className="py-3.5 px-4">Lifecycle Status</th>
                     <th className="py-3.5 px-4 text-right">WhatsApp Contact</th>
                     <th className="py-3.5 px-4 text-right">Action</th>
@@ -507,7 +729,7 @@ export default function AdminDashboardPage() {
                 <tbody className="divide-y divide-[#E4E7DE] text-xs">
                   {filteredLeads.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="text-center py-14 text-[#5B6660]">
+                      <td colSpan={7} className="text-center py-14 text-[#5B6660]">
                         <div className="flex flex-col items-center justify-center space-y-2">
                           <div className="w-10 h-10 rounded-full bg-[#1F5C33]/10 text-[#1F5C33] flex items-center justify-center">
                             <Inbox className="w-5 h-5" />
@@ -558,15 +780,64 @@ export default function AdminDashboardPage() {
                         </td>
 
                         <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-1 text-[#131A15]">
-                            <MapPin className="w-3.5 h-3.5 text-[#5B6660] flex-shrink-0" />
-                            <span className="font-medium truncate max-w-[160px]">
-                              {lead.location}
+                          {(() => {
+                            const locInfo = getLeadLocationDisplay(lead);
+
+                            if (locInfo.hasLocation) {
+                              return (
+                                <div>
+                                  <div className="flex items-center gap-1 text-[#131A15]">
+                                    <MapPin className="w-3.5 h-3.5 text-[#5B6660] flex-shrink-0" />
+                                    <span className="font-medium truncate max-w-[160px]">
+                                      {locInfo.location}
+                                    </span>
+                                  </div>
+                                  {locInfo.hasPincode && (
+                                    <span className="text-[10px] text-[#5B6660] block ml-4 font-mono">
+                                      Pin: {locInfo.pincode}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            }
+
+                            if (locInfo.hasPincode) {
+                              return (
+                                <div className="flex items-center gap-1.5 text-[#131A15]">
+                                  <MapPin className="w-3.5 h-3.5 text-[#1F5C33] flex-shrink-0" />
+                                  <div>
+                                    <span className="font-mono font-bold text-xs text-[#131A15]">
+                                      Pin: {locInfo.pincode}
+                                    </span>
+                                    <span className="text-[10px] text-[#5B6660] block font-medium">
+                                      Pickup Pincode
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            }
+
+                            return (
+                              <div className="flex items-center gap-1 text-[#8E9B91]">
+                                <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                                <span className="text-xs italic">Not specified</span>
+                              </div>
+                            );
+                          })()}
+                        </td>
+
+                        <td className="py-3.5 px-4 whitespace-nowrap">
+                          <div className="flex items-center gap-1.5 text-[#131A15]">
+                            <Calendar className="w-3.5 h-3.5 text-[#5B6660] flex-shrink-0" />
+                            <span className="font-semibold text-xs text-[#131A15]">
+                              {formatLeadDate(lead.createdAt)}
                             </span>
                           </div>
-                          <span className="text-[10px] text-[#5B6660] block ml-4">
-                            Pin: {lead.pincode}
-                          </span>
+                          {formatLeadTime(lead.createdAt) && (
+                            <span className="text-[10px] text-[#5B6660] block ml-5 font-mono">
+                              {formatLeadTime(lead.createdAt)}
+                            </span>
+                          )}
                         </td>
 
                         <td className="py-3.5 px-4">
@@ -589,10 +860,19 @@ export default function AdminDashboardPage() {
                             href={getWhatsAppLink(lead)}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => {
+                              trackVisitorEvent('whatsapp_chat_click', {
+                                category: 'Inquiry',
+                                label: 'Admin Leads Table WhatsApp',
+                                leadId: lead.id || lead._id,
+                              });
+                            }}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#25D366] text-white hover:bg-[#20ba5a] text-xs font-bold transition-all shadow-2xs hover:scale-105 cursor-pointer"
                             title="Open WhatsApp chat with customer"
                           >
-                            <MessageSquare className="w-3.5 h-3.5 fill-current" />
+                            <svg className="w-3.5 h-3.5 fill-current flex-shrink-0" viewBox="0 0 24 24">
+                              <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2zm0 18.09c-1.52 0-3.02-.41-4.32-1.18l-.31-.18-3.2.84.85-3.12-.2-.32c-.85-1.35-1.3-2.93-1.3-4.52 0-4.52 3.68-8.2 8.2-8.2 2.19 0 4.25.85 5.8 2.4 1.55 1.55 2.4 3.61 2.4 5.8 0 4.52-3.68 8.2-8.2 8.2zm4.5-6.15c-.25-.12-1.46-.72-1.69-.8-.23-.08-.39-.12-.56.12-.17.25-.64.8-.79.97-.14.17-.29.19-.54.07-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.57.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z" />
+                            </svg>
                             <span>WhatsApp</span>
                           </a>
                         </td>
@@ -945,10 +1225,25 @@ export default function AdminDashboardPage() {
                     <span className="font-bold font-mono text-[#131A15]">{selectedLead.phone}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-[#5B6660] block">Pickup Address & District</span>
+                    <span className="text-[#5B6660] block">Pickup Location / Pincode</span>
                     <span className="font-bold text-[#131A15]">
-                      {selectedLead.location} (PIN: {selectedLead.pincode})
+                      {(() => {
+                        const locInfo = getLeadLocationDisplay(selectedLead);
+                        if (locInfo.hasLocation && locInfo.hasPincode) {
+                          return `${locInfo.location} (PIN: ${locInfo.pincode})`;
+                        }
+                        if (locInfo.hasLocation) return locInfo.location;
+                        if (locInfo.hasPincode) return `PIN: ${locInfo.pincode} (Pickup Pincode)`;
+                        return 'Not specified';
+                      })()}
                     </span>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="text-[#5B6660] block">Date & Time Submitted</span>
+                    <div className="flex items-center gap-1.5 font-bold text-[#131A15] mt-0.5">
+                      <Calendar className="w-3.5 h-3.5 text-[#1F5C33]" />
+                      <span>{formatFullDateTime(selectedLead.createdAt)}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -980,9 +1275,18 @@ export default function AdminDashboardPage() {
                 href={getWhatsAppLink(selectedLead)}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => {
+                  trackVisitorEvent('whatsapp_chat_click', {
+                    category: 'Inquiry',
+                    label: 'Admin Lead Modal WhatsApp',
+                    leadId: selectedLead.id || selectedLead._id,
+                  });
+                }}
                 className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#25D366] text-white font-bold text-xs hover:bg-[#20ba5a] transition-all shadow-sm cursor-pointer"
               >
-                <MessageSquare className="w-3.5 h-3.5 fill-current" />
+                <svg className="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24">
+                  <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2zm0 18.09c-1.52 0-3.02-.41-4.32-1.18l-.31-.18-3.2.84.85-3.12-.2-.32c-.85-1.35-1.3-2.93-1.3-4.52 0-4.52 3.68-8.2 8.2-8.2 2.19 0 4.25.85 5.8 2.4 1.55 1.55 2.4 3.61 2.4 5.8 0 4.52-3.68 8.2-8.2 8.2zm4.5-6.15c-.25-.12-1.46-.72-1.69-.8-.23-.08-.39-.12-.56.12-.17.25-.64.8-.79.97-.14.17-.29.19-.54.07-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.57.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z" />
+                </svg>
                 <span>Chat on WhatsApp</span>
               </a>
             </div>

@@ -36,7 +36,13 @@ export const trackVisitorEvent = async (eventName, params = {}) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
       keepalive: true,
-    }).catch(() => {});
+    })
+      .then(() => {
+        try {
+          window.dispatchEvent(new CustomEvent('analytics_event_tracked', { detail: payload }));
+        } catch {}
+      })
+      .catch(() => {});
   } catch {}
 };
 

@@ -19,8 +19,8 @@ export const createLead = async (req, res) => {
       `${raw.year || ''} ${raw.make || ''} ${raw.model || ''}`.trim() ||
       'Vehicle details submitted';
 
-    const location = raw.location || raw.city || 'Delhi NCR';
-    const pincode = raw.pincode || raw.postalCode || '';
+    const location = (raw.location || raw.city || '').trim();
+    const pincode = (raw.pincode || raw.postalCode || '').trim();
 
     const leadData = {
       regNumber,
