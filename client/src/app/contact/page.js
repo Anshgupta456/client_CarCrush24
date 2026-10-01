@@ -7,6 +7,7 @@ import Footer from '../../components/Footer';
 import SectionHeader from '../../components/SectionHeader';
 import { useCompany } from '../../context/CompanyContext';
 import { trackVisitorEvent } from '../../components/GoogleAnalytics';
+import { Phone } from 'lucide-react';
 
 export default function ContactPage() {
   const { company } = useCompany();
@@ -125,20 +126,20 @@ export default function ContactPage() {
         </section>
 
 
-        {/* ================= 4 DIRECT CONTACT CHANNELS ================= */}
+        {/* ================= 5 DIRECT CONTACT CHANNELS ================= */}
         <section className="relative pb-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5">
 
-            {/* Channel 1: Toll Free Phone */}
-            <div className="rounded-3xl bg-white border border-[#E8ECE4] p-6 shadow-xs hover:shadow-md hover:border-[#188A38]/50 transition-all flex flex-col justify-between group">
+            {/* Channel 1: Contact Phone */}
+            <div className="rounded-3xl bg-white border border-[#E8ECE4] p-5 sm:p-6 shadow-xs hover:shadow-md hover:border-[#188A38]/50 transition-all flex flex-col justify-between group h-full">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
                     <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
                   </svg>
                 </div>
-                <h3 className="text-base font-black text-[#111827] tracking-tight">Toll-Free Helpline</h3>
-                <p className="text-xs text-[#6B7280] mt-1 leading-relaxed">
+                <h3 className="text-base font-black text-[#111827] tracking-tight">Contact Number</h3>
+                <p className="text-xs text-[#6B7280] mt-1.5 leading-relaxed">
                   Call our advisory desk for instant RTO guidance &amp; impound protection.
                 </p>
               </div>
@@ -150,12 +151,12 @@ export default function ContactPage() {
                   <span>{company?.tollFreePhone || '1800-22-CRUSH'}</span>
                   <span>→</span>
                 </a>
-                <span className="text-[11px] text-[#9CA3AF] block mt-0.5">Toll-free across India</span>
+                <span className="text-[11px] text-[#9CA3AF] block mt-0.5">Direct customer support</span>
               </div>
             </div>
 
             {/* Channel 2: WhatsApp Desk */}
-            <div className="rounded-3xl bg-white border border-[#E8ECE4] p-6 shadow-xs hover:shadow-md hover:border-[#188A38]/50 transition-all flex flex-col justify-between group">
+            <div className="rounded-3xl bg-white border border-[#E8ECE4] p-5 sm:p-6 shadow-xs hover:shadow-md hover:border-[#188A38]/50 transition-all flex flex-col justify-between group h-full">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
@@ -163,7 +164,7 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <h3 className="text-base font-black text-[#111827] tracking-tight">WhatsApp Scrap Desk</h3>
-                <p className="text-xs text-[#6B7280] mt-1 leading-relaxed">
+                <p className="text-xs text-[#6B7280] mt-1.5 leading-relaxed">
                   Send car photos &amp; RC copy for a 5-minute photo valuation report.
                 </p>
               </div>
@@ -188,7 +189,7 @@ export default function ContactPage() {
             </div>
 
             {/* Channel 3: Fleet & Corporate */}
-            <div className="rounded-3xl bg-white border border-[#E8ECE4] p-6 shadow-xs hover:shadow-md hover:border-[#188A38]/50 transition-all flex flex-col justify-between group">
+            <div className="rounded-3xl bg-white border border-[#E8ECE4] p-5 sm:p-6 shadow-xs hover:shadow-md hover:border-[#188A38]/50 transition-all flex flex-col justify-between group h-full">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
@@ -196,7 +197,7 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <h3 className="text-base font-black text-[#111827] tracking-tight">Email Support</h3>
-                <p className="text-xs text-[#6B7280] mt-1 leading-relaxed">
+                <p className="text-xs text-[#6B7280] mt-1.5 leading-relaxed">
                   Send official RTO de-registration documents or corporate inquiries.
                 </p>
               </div>
@@ -212,17 +213,17 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Channel 4: Corporate Head Office */}
-            <div className="rounded-3xl bg-white border border-[#E8ECE4] p-6 shadow-xs hover:shadow-md hover:border-[#188A38]/50 transition-all flex flex-col justify-between group">
+            {/* Channel 4: Registered Address */}
+            <div className="rounded-3xl bg-white border border-[#E8ECE4] p-5 sm:p-6 shadow-xs hover:shadow-md hover:border-[#188A38]/50 transition-all flex flex-col justify-between group h-full">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                   </svg>
                 </div>
-                <h3 className="text-base font-black text-[#111827] tracking-tight">HQ &amp; Facility</h3>
-                <p className="text-xs text-[#6B7280] mt-1 leading-relaxed">
-                  {company?.address || 'Sector 62, Electronic City, Noida, Delhi-NCR, UP 201309.'}
+                <h3 className="text-base font-black text-[#111827] tracking-tight">Registered Address</h3>
+                <p className="text-xs text-[#6B7280] mt-1.5 leading-relaxed">
+                  {company?.registeredOfficeAddress || company?.address || 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667'}
                 </p>
               </div>
               <div className="mt-5 pt-3 border-t border-gray-100">
@@ -231,6 +232,31 @@ export default function ContactPage() {
                   className="text-sm font-black text-[#188A38] hover:underline flex items-center gap-1.5"
                 >
                   <span>{company?.phone || company?.tollFreePhone || '1800-22-CRUSH'}</span>
+                  <span>→</span>
+                </a>
+                <span className="text-[11px] text-[#9CA3AF] block mt-0.5">Corporate HQ &amp; Compliance</span>
+              </div>
+            </div>
+
+            {/* Channel 5: Primary Unit Address */}
+            <div className="rounded-3xl bg-white border border-[#E8ECE4] p-5 sm:p-6 shadow-xs hover:shadow-md hover:border-[#188A38]/50 transition-all flex flex-col justify-between group h-full">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-[#E8F8ED] text-[#188A38] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" />
+                  </svg>
+                </div>
+                <h3 className="text-base font-black text-[#111827] tracking-tight">Primary Unit Address</h3>
+                <p className="text-xs text-[#6B7280] mt-1.5 leading-relaxed">
+                  {company?.facilityAddress || company?.address || 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667'}
+                </p>
+              </div>
+              <div className="mt-5 pt-3 border-t border-gray-100">
+                <a
+                  href={`tel:${company?.tollFreeTel || '1800227278'}`}
+                  className="text-sm font-black text-[#188A38] hover:underline flex items-center gap-1.5"
+                >
+                  <span>{company?.tollFreePhone || '1800-22-CRUSH'}</span>
                   <span>→</span>
                 </a>
                 <span className="text-[11px] text-[#9CA3AF] block mt-0.5">{company?.operatingHours || 'Open 7 days a week'}</span>
@@ -498,6 +524,7 @@ export default function ContactPage() {
                     href={`tel:${company?.tollFreeTel || '1800227278'}`}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-white font-bold text-sm sm:text-base tracking-tight transition-all cursor-pointer"
                   >
+                    <Phone className="w-4 h-4 text-[#6FCF3C]" />
                     <span>{company?.tollFreePhone || '1800-22-CRUSH'}</span>
                   </a>
                 </div>

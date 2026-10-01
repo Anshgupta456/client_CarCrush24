@@ -25,6 +25,7 @@ export default function CompanyProfileView() {
 
   const [companyForm, setCompanyForm] = useState({
     companyName: company?.companyName || 'CarCrush24',
+    legalName: company?.legalName || 'Garhwal Scrap Private Limited',
     tagline: company?.tagline || 'Authorized Vehicle Scrappage Facility (RVSF)',
     tollFreePhone: company?.tollFreePhone || '1800-22-CRUSH',
     phone: company?.phone || '',
@@ -53,6 +54,8 @@ export default function CompanyProfileView() {
         setCompanyForm((prev) => ({
           ...prev,
           ...company,
+          registeredOfficeAddress:
+            company.registeredOfficeAddress || company.address || prev.registeredOfficeAddress || '',
           facilityAddress: company.facilityAddress || company.address || prev.facilityAddress || '',
           operatingHubs: Array.isArray(company.operatingHubs)
             ? company.operatingHubs.join(', ')
@@ -67,7 +70,7 @@ export default function CompanyProfileView() {
     setCompanyStatus({ success: '', error: '' });
 
     if (!companyForm.companyName.trim() || !companyForm.tollFreePhone.trim() || !companyForm.email.trim()) {
-      setCompanyStatus({ error: 'Company Name, Toll-free Phone, and Support Email are required.' });
+      setCompanyStatus({ error: 'Company Name, Contact Number, and Support Email are required.' });
       return;
     }
 
@@ -164,7 +167,7 @@ export default function CompanyProfileView() {
                 </h2>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-[#131A15] uppercase tracking-wider mb-1.5">
                     Official Company Name
@@ -181,7 +184,20 @@ export default function CompanyProfileView() {
 
                 <div>
                   <label className="block text-xs font-semibold text-[#131A15] uppercase tracking-wider mb-1.5">
-                    Tagline / RVSF Clearance Title
+                    Legal Entity Name (RVSF)
+                  </label>
+                  <input
+                    type="text"
+                    value={companyForm.legalName}
+                    onChange={(e) => setCompanyForm({ ...companyForm, legalName: e.target.value })}
+                    placeholder="Garhwal Scrap Private Limited"
+                    className="w-full px-4 py-2.5 rounded-xl bg-[#F8F9F5] border border-[#E4E7DE] text-sm text-[#131A15] focus:outline-none focus:border-[#1F5C33]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-[#131A15] uppercase tracking-wider mb-1.5">
+                    Tagline / RVSF Title
                   </label>
                   <input
                     type="text"
@@ -206,13 +222,13 @@ export default function CompanyProfileView() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-[#131A15] uppercase tracking-wider mb-1.5">
-                    Toll-Free Helpline (Navbar / Footer / CTAs)
+                    Contact Number (Navbar / Footer / CTAs)
                   </label>
                   <input
                     type="text"
                     value={companyForm.tollFreePhone}
                     onChange={(e) => setCompanyForm({ ...companyForm, tollFreePhone: e.target.value })}
-                    placeholder="1800-22-CRUSH"
+                    placeholder="e.g. +91 9068665363"
                     className="w-full px-4 py-2.5 rounded-xl bg-[#F8F9F5] border border-[#E4E7DE] text-sm text-[#131A15] focus:outline-none focus:border-[#1F5C33]"
                     required
                   />
@@ -312,26 +328,29 @@ export default function CompanyProfileView() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-[#131A15] uppercase tracking-wider mb-1.5">
-                    Registered Corporate HQ Address
+                    Registered Address
                   </label>
                   <textarea
                     rows={2}
                     value={companyForm.registeredOfficeAddress}
                     onChange={(e) => setCompanyForm({ ...companyForm, registeredOfficeAddress: e.target.value })}
-                    placeholder="Enter registered corporate HQ address"
+                    placeholder="Enter registered address"
                     className="w-full px-4 py-2.5 rounded-xl bg-[#F8F9F5] border border-[#E4E7DE] text-sm text-[#131A15] focus:outline-none focus:border-[#1F5C33]"
                   />
+                  <span className="text-[10px] text-[#5B6660] mt-1 block">
+                    Publicly visible in Footer, Contact Us page, and legal notices.
+                  </span>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-[#131A15] uppercase tracking-wider mb-1.5">
-                    Primary RVSF Processing Yard Address
+                    Primary Unit Address
                   </label>
                   <textarea
                     rows={2}
                     value={companyForm.address}
                     onChange={(e) => setCompanyForm({ ...companyForm, address: e.target.value, facilityAddress: e.target.value })}
-                    placeholder="Enter primary RVSF processing yard address"
+                    placeholder="Enter primary unit address"
                     className="w-full px-4 py-2.5 rounded-xl bg-[#F8F9F5] border border-[#E4E7DE] text-sm text-[#131A15] focus:outline-none focus:border-[#1F5C33]"
                   />
                   <span className="text-[10px] text-[#5B6660] mt-1 block">
@@ -455,7 +474,7 @@ export default function CompanyProfileView() {
             {/* Header / Helpline snippet preview */}
             <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-2">
               <span className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold block">
-                Helpline & Header Callout:
+                Contact Number & Callout:
               </span>
               <div className="flex items-center gap-2 text-sm font-black text-white">
                 <Phone className="w-4 h-4 text-[#6FCF3C]" />
@@ -484,14 +503,22 @@ export default function CompanyProfileView() {
               </div>
             </div>
 
-            {/* Footer Address snippet preview */}
+            {/* Footer Addresses preview */}
             <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-2">
               <span className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold block">
-                Primary Scrap Facility:
+                Registered Address:
               </span>
               <p className="text-xs text-gray-300 leading-relaxed">
-                {companyForm.address || 'Address not yet entered'}
+                {companyForm.registeredOfficeAddress || companyForm.address || 'Address not yet entered'}
               </p>
+              <div className="pt-2 border-t border-white/10">
+                <span className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold block">
+                  Primary Unit Address:
+                </span>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  {companyForm.facilityAddress || companyForm.address || 'Address not yet entered'}
+                </p>
+              </div>
             </div>
 
             {/* Operating Hours preview */}

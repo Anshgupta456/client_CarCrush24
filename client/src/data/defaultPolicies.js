@@ -12,7 +12,7 @@ export const defaultPolicies = {
         id: 'overview',
         heading: '1. Commitment to Privacy & Compliance',
         content:
-          'CarCrush24 ("Garhwal Scrape", "we", "us", or "our") operates as a government-authorized Registered Vehicle Scrapping Facility (RVSF). We recognize the sensitivity of vehicle ownership records, identity proofs, and personal information entrusted to us during the vehicle disposal and Certificate of Deposit (CoD) generation process. This Privacy Policy outlines how we collect, verify, process, store, and protect your data in strict alignment with the Information Technology Act, 2000, the Digital Personal Data Protection Act, 2023, and the Motor Vehicles (Registration and Functions of Vehicle Scrapping Facility) Rules, 2021.',
+          'CarCrush24 ("Garhwal Scrap Private Limited", "we", "us", or "our") operates as a government-authorized Registered Vehicle Scrapping Facility (RVSF). We recognize the sensitivity of vehicle ownership records, identity proofs, and personal information entrusted to us during the vehicle disposal and Certificate of Deposit (CoD) generation process. This Privacy Policy outlines how we collect, verify, process, store, and protect your data in strict alignment with the Information Technology Act, 2000, the Digital Personal Data Protection Act, 2023, and the Motor Vehicles (Registration and Functions of Vehicle Scrapping Facility) Rules, 2021.',
       },
       {
         id: 'information-collected',
@@ -48,7 +48,7 @@ export const defaultPolicies = {
         id: 'contact-grievance',
         heading: '7. Grievance Redressal & Compliance Desk',
         content:
-          'If you have questions, concerns, or grievances regarding this Privacy Policy or your personal records, contact our designated Grievance Officer:\n• Company: CarCrush24 (Garhwal Scrape)\n• Compliance Desk: legal@carcrush24.com / support@carcrush24.com\n• Helpline: 1800-22-CRUSH / +91 7310756278\n• Corporate Office: Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667.',
+          'If you have questions, concerns, or grievances regarding this Privacy Policy or your personal records, contact our designated Grievance Officer:\n• Company: CarCrush24 (Garhwal Scrap Private Limited)\n• Compliance Desk: legal@carcrush24.com / support@carcrush24.com\n• Helpline: 1800-22-CRUSH / +91 7310756278\n• Registered Address: Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667.\n• Primary Unit Address: Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667.',
       },
     ],
   },
@@ -65,7 +65,7 @@ export const defaultPolicies = {
         id: 'acceptance',
         heading: '1. Binding Legal Agreement',
         content:
-          'By requesting a vehicle valuation, booking a doorstep pickup, or submitting vehicle documentation to CarCrush24 ("Garhwal Scrape"), you unconditionally accept and agree to be bound by these Terms and Conditions. These terms govern all services rendered by our Registered Vehicle Scrapping Facility (RVSF) under the Motor Vehicles Act, 1988, and the Motor Vehicles (Registration and Functions of Vehicle Scrapping Facility) Rules, 2021.',
+          'By requesting a vehicle valuation, booking a doorstep pickup, or submitting vehicle documentation to CarCrush24 ("Garhwal Scrap Private Limited"), you unconditionally accept and agree to be bound by these Terms and Conditions. These terms govern all services rendered by our Registered Vehicle Scrapping Facility (RVSF) under the Motor Vehicles Act, 1988, and the Motor Vehicles (Registration and Functions of Vehicle Scrapping Facility) Rules, 2021.',
       },
       {
         id: 'eligibility',

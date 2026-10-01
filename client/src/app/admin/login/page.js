@@ -540,7 +540,7 @@ export default function AdminLoginPage() {
 
       {/* Footer copyright */}
       <footer className="w-full max-w-7xl mx-auto px-6 py-4 text-center text-xs text-[#5B6660] z-10">
-        © {new Date().getFullYear()} CarCrush24 (Garhwal Scrape). Internal Operations System.
+        © {new Date().getFullYear()} CarCrush24 (Garhwal Scrap Private Limited). Internal Operations System.
       </footer>
     </div>
   );
