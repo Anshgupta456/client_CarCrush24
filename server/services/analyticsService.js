@@ -397,7 +397,7 @@ export const getAnalyticsData = async (timeRange = '30d') => {
     },
     {
       event: 'phone_call_click',
-      label: 'Toll-Free Helpline Call Initiated',
+      label: 'Contact Phone Call Initiated',
       category: 'Inquiry',
       count: actionCounts['phone_call_click'] || phoneClicks,
       growth: '+Live',

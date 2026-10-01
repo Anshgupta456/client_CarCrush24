@@ -10,7 +10,7 @@ const companyProfileSchema = new mongoose.Schema(
     },
     legalName: {
       type: String,
-      default: 'Garhwal Scrape',
+      default: 'Garhwal Scrap Private Limited',
       trim: true,
     },
     tagline: {
@@ -64,6 +64,11 @@ const companyProfileSchema = new mongoose.Schema(
       default: 'info@carcrush24.com',
       trim: true,
       lowercase: true,
+    },
+    registeredOfficeAddress: {
+      type: String,
+      default: 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667',
+      trim: true,
     },
     address: {
       type: String,

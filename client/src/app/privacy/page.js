@@ -145,12 +145,22 @@ export default function PrivacyPolicyPage() {
                 <p className="text-[11.5px] text-[#A1B2A5] leading-relaxed">
                   Govt-authorized Registered Vehicle Scrapping Facility (RVSF) operating under Central MoRTH Notification &amp; Parivahan database.
                 </p>
-                <div className="pt-2 border-t border-white/10 text-[11px] text-[#C5D4C9] space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-[#6FCF3C] flex-shrink-0" />
-                    <span className="truncate">{company?.address || 'Roorkee, Uttarakhand'}</span>
+                <div className="pt-2 border-t border-white/10 text-[11px] text-[#C5D4C9] space-y-2">
+                  <div className="flex items-start gap-2">
+                    <MapPin className="w-3.5 h-3.5 text-[#6FCF3C] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block font-semibold text-white text-[10px] uppercase">Registered Address:</span>
+                      <span className="leading-tight block">{company?.registeredOfficeAddress || company?.address || 'Roorkee, Uttarakhand'}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-start gap-2 pt-1 border-t border-white/5">
+                    <MapPin className="w-3.5 h-3.5 text-[#6FCF3C] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <span className="block font-semibold text-white text-[10px] uppercase">Primary Unit Address:</span>
+                      <span className="leading-tight block">{company?.facilityAddress || company?.address || 'Roorkee, Uttarakhand'}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 pt-1 border-t border-white/5">
                     <Phone className="w-3.5 h-3.5 text-[#6FCF3C] flex-shrink-0" />
                     <span>{company?.tollFreePhone || '1800-22-CRUSH'}</span>
                   </div>
@@ -194,7 +204,7 @@ export default function PrivacyPolicyPage() {
                 >
                   {company?.email || 'support@carcrush24.com'}
                 </a>{' '}
-                or call Toll-Free{' '}
+                or call our Contact Number at{' '}
                 <a
                   href={`tel:${company?.tollFreeTel || '1800227278'}`}
                   className="text-[#1F5C33] font-semibold"

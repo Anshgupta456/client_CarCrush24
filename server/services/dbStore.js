@@ -14,7 +14,7 @@ const storeFilePath = path.resolve(__dirname, '../data/db_store.json');
 
 export const defaultCompanyProfile = {
   companyName: 'CarCrush24',
-  legalName: 'Garhwal Scrape',
+  legalName: 'Garhwal Scrap Private Limited',
   tagline: 'Recycle • Reuse • A Cleaner Tomorrow',
   rvsfRegistration: 'MoRTH / RVSF / DL / 2024 / 0089',
   tollFreePhone: '1800-22-CRUSH',
@@ -25,6 +25,7 @@ export const defaultCompanyProfile = {
   whatsappDisplay: '+91 73102 42424',
   email: 'support@carcrush24.com',
   corporateEmail: 'info@carcrush24.com',
+  registeredOfficeAddress: 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667',
   address: 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667',
   facilityAddress: 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667',
   operatingHours: 'Monday – Sunday: 8:00 AM – 8:00 PM (24/7 Helpline Desk)',
@@ -57,7 +58,7 @@ export const defaultPolicies = {
       {
         id: 'overview',
         heading: '1. Commitment to Privacy & Compliance',
-        content: 'CarCrush24 ("Garhwal Scrape", "we", "us", or "our") operates as a government-authorized Registered Vehicle Scrapping Facility (RVSF). We recognize the sensitivity of vehicle ownership records, identity proofs, and personal information entrusted to us during the vehicle disposal and Certificate of Deposit (CoD) generation process. This Privacy Policy outlines how we collect, verify, process, store, and protect your data in strict alignment with the Information Technology Act, 2000, the Digital Personal Data Protection Act, 2023, and the Motor Vehicles (Registration and Functions of Vehicle Scrapping Facility) Rules, 2021.'
+        content: 'CarCrush24 ("Garhwal Scrap Private Limited", "we", "us", or "our") operates as a government-authorized Registered Vehicle Scrapping Facility (RVSF). We recognize the sensitivity of vehicle ownership records, identity proofs, and personal information entrusted to us during the vehicle disposal and Certificate of Deposit (CoD) generation process. This Privacy Policy outlines how we collect, verify, process, store, and protect your data in strict alignment with the Information Technology Act, 2000, the Digital Personal Data Protection Act, 2023, and the Motor Vehicles (Registration and Functions of Vehicle Scrapping Facility) Rules, 2021.'
       },
       {
         id: 'information-collected',
@@ -87,7 +88,7 @@ export const defaultPolicies = {
       {
         id: 'contact-grievance',
         heading: '7. Grievance Redressal & Compliance Desk',
-        content: 'If you have questions, concerns, or grievances regarding this Privacy Policy or your personal records, contact our designated Grievance Officer:\n• Company: CarCrush24 (Garhwal Scrape)\n• Compliance Desk: legal@carcrush24.com / support@carcrush24.com\n• Helpline: 1800-22-CRUSH / +91 7310756278\n• Corporate Office: Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667.'
+        content: 'If you have questions, concerns, or grievances regarding this Privacy Policy or your personal records, contact our designated Grievance Officer:\n• Company: CarCrush24 (Garhwal Scrap Private Limited)\n• Compliance Desk: legal@carcrush24.com / support@carcrush24.com\n• Helpline: 1800-22-CRUSH / +91 7310756278\n• Registered Address: Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667.\n• Primary Unit Address: Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667.'
       }
     ]
   },
@@ -102,7 +103,7 @@ export const defaultPolicies = {
       {
         id: 'acceptance',
         heading: '1. Binding Legal Agreement',
-        content: 'By requesting a vehicle valuation, booking a doorstep pickup, or submitting vehicle documentation to CarCrush24 ("Garhwal Scrape"), you unconditionally accept and agree to be bound by these Terms and Conditions. These terms govern all services rendered by our Registered Vehicle Scrapping Facility (RVSF) under the Motor Vehicles Act, 1988, and the Motor Vehicles (Registration and Functions of Vehicle Scrapping Facility) Rules, 2021.'
+        content: 'By requesting a vehicle valuation, booking a doorstep pickup, or submitting vehicle documentation to CarCrush24 ("Garhwal Scrap Private Limited"), you unconditionally accept and agree to be bound by these Terms and Conditions. These terms govern all services rendered by our Registered Vehicle Scrapping Facility (RVSF) under the Motor Vehicles Act, 1988, and the Motor Vehicles (Registration and Functions of Vehicle Scrapping Facility) Rules, 2021.'
       },
       {
         id: 'eligibility',

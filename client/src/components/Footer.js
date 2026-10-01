@@ -10,15 +10,19 @@ export default function Footer() {
   const { company } = useCompany();
   const currentYear = new Date().getFullYear();
 
-  const hubs = company?.operatingHubs || [
-    'Delhi NCR',
-    'Punjab',
-    'Haryana',
-    'Uttar Pradesh',
-    'Uttarakhand',
-    'Jammu & Kashmir',
-    'Chandigarh',
-  ];
+  const hubs = Array.isArray(company?.operatingHubs)
+    ? company.operatingHubs
+    : typeof company?.operatingHubs === 'string'
+    ? company.operatingHubs.split(',').map((h) => h.trim()).filter(Boolean)
+    : [
+        'Delhi NCR',
+        'Punjab',
+        'Haryana',
+        'Uttar Pradesh',
+        'Uttarakhand',
+        'Jammu & Kashmir',
+        'Chandigarh',
+      ];
 
   const socialItems = [
     {
@@ -73,7 +77,7 @@ export default function Footer() {
 
             {/* Address & Contact Details */}
             <div className="space-y-3.5 text-xs sm:text-[13px] text-[#C5D4C9]">
-              {/* Location Address */}
+              {/* Registered Address */}
               <div className="flex items-start gap-3">
                 <div className="w-5 h-5 rounded-full bg-[#188A38]/30 text-[#6FCF3C] flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
@@ -81,7 +85,21 @@ export default function Footer() {
                   </svg>
                 </div>
                 <span>
-                  <strong className="text-white font-semibold">Corporate Office:</strong> {company?.address || 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667'}
+                  <strong className="text-white font-semibold">Registered Address:</strong>{' '}
+                  {company?.registeredOfficeAddress || company?.address || 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667'}
+                </span>
+              </div>
+
+              {/* Primary Unit Address */}
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 rounded-full bg-[#188A38]/30 text-[#6FCF3C] flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                  </svg>
+                </div>
+                <span>
+                  <strong className="text-white font-semibold">Primary Unit Address:</strong>{' '}
+                  {company?.facilityAddress || company?.address || 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667'}
                 </span>
               </div>
 
@@ -93,13 +111,13 @@ export default function Footer() {
                   </svg>
                 </div>
                 <span>
-                  <strong className="text-white font-semibold">Toll-Free Helpline:</strong>{' '}
+                  <strong className="text-white font-semibold">Contact Number:</strong>{' '}
                   <a
                     href={`tel:${company?.tollFreeTel || '1800227278'}`}
                     onClick={() => {
                       trackVisitorEvent('phone_call_click', {
                         category: 'Inquiry',
-                        label: 'Footer Toll-Free Call',
+                        label: 'Footer Contact Call',
                       });
                     }}
                     className="hover:text-[#6FCF3C] transition-colors"
@@ -187,6 +205,11 @@ export default function Footer() {
                     Contact &amp; Support
                   </Link>
                 </li>
+                <li>
+                  <Link href="/sitemap" className="hover:text-white transition-colors">
+                    Sitemap
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -233,6 +256,10 @@ export default function Footer() {
               Terms &amp; Conditions
             </Link>
             <span className="text-[#324D37]">•</span>
+            <Link href="/sitemap" className="hover:text-[#6FCF3C] transition-colors">
+              Sitemap
+            </Link>
+            <span className="text-[#324D37]">•</span>
             <button
               type="button"
               onClick={() => {
@@ -244,10 +271,6 @@ export default function Footer() {
             >
               Cookie Preferences
             </button>
-            <span className="text-[#324D37]">•</span>
-            <span className="text-[#A1B2A5] font-medium">
-              {company?.tagline || 'Recycle • Reuse • A Cleaner Tomorrow'}
-            </span>
           </div>
 
         </div>

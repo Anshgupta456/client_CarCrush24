@@ -6,7 +6,7 @@ This file gives Claude (and any dev working in this repo) the full context neede
 
 ## 1. Project Overview
 
-**Client:** Garhwal Scrape, operating as **CarCrush24**
+**Client:** Garhwal Scrap Private Limited, operating as **CarCrush24**
 **What the business does:** Vehicle scrapping & recycling — two-wheelers, cars, and commercial trucks — for both individual and business/fleet customers. Revenue comes from buying end-of-life vehicles (priced on scrap weight + resellable parts), dismantling/depolluting them, harvesting reusable parts, and selling scrap metal + used parts.
 
 **What we're building:** A marketing / lead-generation website. **This is NOT a heavy backend build** — no customer accounts, no customer login, no payment gateway, no e-commerce checkout in this phase.

@@ -399,7 +399,7 @@ export default async function SingleBlogPage({ params }) {
                   </div>
                 )}
 
-                {/* Direct Toll-Free Helpline Support */}
+                {/* Direct Contact Support */}
                 <SidebarHelplineCard />
               </aside>
 

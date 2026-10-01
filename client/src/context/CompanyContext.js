@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 
 export const initialCompanyDetails = {
   companyName: 'CarCrush24',
-  legalName: 'Garhwal Scrape',
+  legalName: 'Garhwal Scrap Private Limited',
   tagline: 'Recycle • Reuse • A Cleaner Tomorrow',
   rvsfRegistration: 'MoRTH / RVSF / DL / 2024 / 0089',
   tollFreePhone: '1800-22-CRUSH',
@@ -15,6 +15,7 @@ export const initialCompanyDetails = {
   whatsappDisplay: '+91 73102 42424',
   email: 'support@carcrush24.com',
   corporateEmail: 'info@carcrush24.com',
+  registeredOfficeAddress: 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667',
   address: 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667',
   facilityAddress: 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667',
   operatingHours: 'Monday – Sunday: 8:00 AM – 8:00 PM (24/7 Helpline Desk)',
@@ -45,6 +46,18 @@ const CompanyContext = createContext({
 
 const STORAGE_KEY = 'carcrush_company_profile';
 
+export const normalizeCompanyProfile = (profile) => {
+  if (!profile) return profile;
+  const normalized = { ...profile };
+  if (typeof normalized.operatingHubs === 'string') {
+    normalized.operatingHubs = normalized.operatingHubs
+      .split(',')
+      .map((h) => h.trim())
+      .filter(Boolean);
+  }
+  return normalized;
+};
+
 export function CompanyProvider({ children }) {
   const [company, setCompany] = useState(initialCompanyDetails);
   const [isLoadingCompany, setIsLoadingCompany] = useState(false);
@@ -57,7 +70,7 @@ export function CompanyProvider({ children }) {
       if (res && res.ok) {
         const json = await res.json();
         if (json.success && json.data) {
-          const merged = { ...initialCompanyDetails, ...json.data };
+          const merged = normalizeCompanyProfile({ ...initialCompanyDetails, ...json.data });
           setCompany(merged);
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
@@ -80,13 +93,17 @@ export function CompanyProvider({ children }) {
       try {
         const cached = localStorage.getItem(STORAGE_KEY);
         if (cached && !ignore) {
-          const parsed = JSON.parse(cached);
+          let parsed = JSON.parse(cached);
           if (parsed.facilityAddress === 'Mayapuri Authorized RVSF Unit #1, New Delhi') {
             parsed.facilityAddress = 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667';
           }
           if (parsed.address === 'Plot 42, Mayapuri Industrial Area, Phase II, New Delhi - 110064') {
             parsed.address = 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667';
           }
+          if (!parsed.registeredOfficeAddress) {
+            parsed.registeredOfficeAddress = parsed.address || 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi, Roorkee, Uttarakhand, 247667';
+          }
+          parsed = normalizeCompanyProfile(parsed);
           setCompany((prev) => ({ ...prev, ...parsed }));
         }
       } catch {}
@@ -95,7 +112,7 @@ export function CompanyProvider({ children }) {
         if (res && res.ok && !ignore) {
           const json = await res.json();
           if (json.success && json.data) {
-            const merged = { ...initialCompanyDetails, ...json.data };
+            const merged = normalizeCompanyProfile({ ...initialCompanyDetails, ...json.data });
             setCompany(merged);
             try {
               localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
@@ -122,7 +139,7 @@ export function CompanyProvider({ children }) {
 
   // Update company profile from admin
   const updateCompany = async (updatedData, authToken = null) => {
-    const merged = { ...company, ...updatedData };
+    const merged = normalizeCompanyProfile({ ...company, ...updatedData });
     setCompany(merged);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
@@ -152,7 +169,7 @@ export function CompanyProvider({ children }) {
       if (res && res.ok) {
         const json = await res.json();
         if (json.data) {
-          setCompany({ ...initialCompanyDetails, ...json.data });
+          setCompany(normalizeCompanyProfile({ ...initialCompanyDetails, ...json.data }));
           apiSucceeded = true;
         }
       }

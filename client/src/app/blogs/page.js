@@ -303,8 +303,8 @@ export default function BlogsPage() {
 
               <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto flex-shrink-0">
                 <HelplineButton
-                  className="px-5 py-3 rounded-full bg-[#188A38] hover:bg-[#157831] text-white text-xs font-bold text-center transition-all shadow-xs cursor-pointer inline-flex items-center justify-center"
-                  showIcon={false}
+                  className="px-5 py-3 rounded-full bg-[#188A38] hover:bg-[#157831] text-white text-xs font-bold text-center transition-all shadow-xs cursor-pointer inline-flex items-center justify-center gap-2"
+                  showIcon={true}
                 />
                 <Link
                   href="/quote"
