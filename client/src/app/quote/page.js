@@ -7,12 +7,12 @@ import QuoteForm from '../../components/QuoteForm';
 import TrustBar from '../../components/TrustBar';
 import CtaBannerSection from '../../components/CtaBannerSection';
 import Footer from '../../components/Footer';
-import { 
-  IndianRupee, 
-  Scale, 
-  Cog, 
-  Truck, 
-  Percent 
+import {
+  IndianRupee,
+  Scale,
+  Cog,
+  Truck,
+  Percent
 } from 'lucide-react';
 import { useCompany } from '../../context/CompanyContext';
 import { trackVisitorEvent } from '../../components/GoogleAnalytics';
@@ -124,7 +124,7 @@ export default function QuotePage() {
   const faqs = [
     {
       q: 'Does my vehicle need to be in running condition or have tyres?',
-      a: 'No, not at all. CarCrush24 accepts vehicles in any state — whether running, non-running, accidental, seized, or without tyres. Our heavy-duty hydraulic flatbed recovery trucks are equipped with heavy winches to safely pull and recover vehicles directly from basements, driveways, and road edges.'
+      a: 'No, not at all. CarCrush24 accepts vehicles in any state - whether running, non-running, accidental, seized, or without tyres. Our heavy-duty hydraulic flatbed recovery trucks are equipped with heavy winches to safely pull and recover vehicles directly from basements, driveways, and road edges.'
     },
     {
       q: 'Is doorstep towing really 100% free?',

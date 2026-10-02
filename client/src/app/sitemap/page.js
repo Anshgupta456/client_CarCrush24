@@ -5,11 +5,9 @@ import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { useCompany } from '../../context/CompanyContext';
-import { blogs as initialBlogs } from '../../data/blogsData';
-
 export default function SitemapPage() {
   const { company } = useCompany();
-  const [blogsList, setBlogsList] = useState(initialBlogs);
+  const [blogsList, setBlogsList] = useState([]);
 
   useEffect(() => {
     let ignore = false;
@@ -18,12 +16,12 @@ export default function SitemapPage() {
         const res = await fetch('/api/blogs');
         if (res.ok && !ignore) {
           const json = await res.json();
-          if (json.data && Array.isArray(json.data) && json.data.length > 0) {
+          if (json.data && Array.isArray(json.data)) {
             setBlogsList(json.data);
           }
         }
       } catch {
-        // Fallback remains active
+        // Graceful error handling
       }
     };
     loadBlogs();
@@ -36,6 +34,7 @@ export default function SitemapPage() {
     { title: 'Home', href: '/', desc: 'Authorized vehicle scrapping portal' },
     { title: 'Get an Instant Quote', href: '/quote', desc: 'Online valuation & pickup booking' },
     { title: 'How It Works', href: '/how-it-works', desc: '4-step vehicle recycling process' },
+    { title: 'Detailed Scrapping Process', href: '/scrapping-process', desc: '10-step legal VScrap Parivahan workflow' },
     { title: 'About CarCrush24', href: '/about', desc: 'RVSF facility, mission & team' },
     { title: 'Blogs & Guides', href: '/blogs', desc: 'RTO policy updates & vehicle guides' },
     { title: 'Contact & Support', href: '/contact', desc: 'Helpdesk lines & locations' },

@@ -150,9 +150,9 @@ export default function AdminDashboardPage() {
 
   // Helper to format lead submission date cleanly
   const formatLeadDate = (dateString) => {
-    if (!dateString) return '—';
+    if (!dateString) return '-';
     const d = new Date(dateString);
-    if (isNaN(d.getTime())) return '—';
+    if (isNaN(d.getTime())) return '-';
 
     const now = new Date();
     const isToday =

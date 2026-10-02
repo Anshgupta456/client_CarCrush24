@@ -6,8 +6,20 @@ import { HelplineButton } from '../../components/HelplineCallout';
 import { Car, Leaf, Recycle, IndianRupee, Eye, Droplets, ShieldCheck, Truck, Factory, FileCheck } from 'lucide-react';
 
 export const metadata = {
-  title: 'About Us | CarCrush24 - India’s Premier Vehicle Recycling Facility',
-  description: 'Learn about CarCrush24, North India’s government-authorized Registered Vehicle Scrapping Facility (RVSF). Discover our mission, vision, core values, and environmental impact.',
+  title: 'About CarCrush24 | Govt. Approved Vehicle Scrapping Facility (RVSF)',
+  description:
+    'CarCrush24 is a government-authorized RVSF offering certified, hassle-free vehicle scrapping for cars, bikes & trucks - legal RTO deregistration, fair payouts, zero middlemen.',
+  alternates: {
+    canonical: 'https://carcrush24.com/about',
+  },
+  openGraph: {
+    title: 'About CarCrush24 | Govt. Approved Vehicle Scrapping Facility (RVSF)',
+    description:
+      'CarCrush24 is a government-authorized RVSF offering certified, hassle-free vehicle scrapping for cars, bikes & trucks - legal RTO deregistration, fair payouts, zero middlemen.',
+    url: 'https://carcrush24.com/about',
+    siteName: 'CarCrush24',
+    type: 'website',
+  },
 };
 
 export default function AboutPage() {
@@ -85,6 +97,38 @@ export default function AboutPage() {
       {/* Floating Pill Navbar */}
       <Navbar />
 
+      {/* Schema.org Organization Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'CarCrush24',
+            legalName: 'Garhwal Scrap Private Limited',
+            url: 'https://carcrush24.com',
+            logo: 'https://carcrush24.com/images/logo-transparent.png',
+            description:
+              'CarCrush24 is a government-authorized Registered Vehicle Scrapping Facility (RVSF) offering certified, hassle-free vehicle scrapping for cars, bikes & trucks - legal RTO deregistration, fair payouts, zero middlemen.',
+            telephone: '1800-22-CRUSH',
+            email: 'support@carcrush24.com',
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: 'Devbhoomi Industrial Areas, Khasra no. 216, Khatakhedi',
+              addressLocality: 'Roorkee',
+              addressRegion: 'Uttarakhand',
+              postalCode: '247667',
+              addressCountry: 'IN',
+            },
+            sameAs: [
+              'https://facebook.com/carcrush24',
+              'https://instagram.com/carcrush24',
+              'https://youtube.com/@carcrush24',
+            ],
+          }),
+        }}
+      />
+
       <main className="flex-1 flex flex-col pt-24 sm:pt-28">
 
         {/* ================= HERO & ABOUT US PARAGRAPH ================= */}
@@ -120,13 +164,16 @@ export default function AboutPage() {
                 {/* About Us Detailed Story */}
                 <div className="mt-5 space-y-3.5 text-[#4B5563] text-xs sm:text-[13.5px] leading-relaxed">
                   <p>
-                    <strong className="text-[#111827] font-bold">CarCrush24</strong> was founded with a singular, vital mission: to transform India&apos;s unorganized automotive scrap landscape into a modern, transparent, and environmentally certified circular ecosystem.
+                    <strong className="text-[#111827] font-bold">CarCrush24</strong> was founded with one clear mission - to bring India&apos;s unorganized vehicle scrapping industry into a modern, transparent, and government-certified system of end-of-life vehicle (ELV) recycling.
                   </p>
                   <p>
-                    For decades, retiring an end-of-life vehicle meant navigating shady local scrap yards, risking illegal resale of chassis numbers, facing delayed RTO deregistrations, and watching toxic vehicle pollutants seep into local groundwater.
+                    For decades, scrapping an old car or bike in India meant dealing with unregulated local scrap dealers, risking illegal resale of chassis numbers, waiting weeks for RTO deregistration, and letting hazardous fluids and vehicle pollutants leak untreated into the ground. CarCrush24 was built to change that.
                   </p>
                   <p>
-                    As an authorized <strong className="text-[#188A38]">Registered Vehicle Scrapping Facility (RVSF)</strong> operating under the Government of India’s Vehicle Scrappage Policy, CarCrush24 provides vehicle owners with an ethical, hassle-free alternative. We combine automated depollution technology, instantaneous Parivahan database verification, fair market payouts, and legally certified Certificate of Deposit (CoD) &amp; CVS documentation.
+                    As a <strong className="text-[#188A38]">Registered Vehicle Scrapping Facility (RVSF)</strong> authorized under the Government of India&apos;s Vehicle Scrappage Policy, CarCrush24 gives vehicle owners - whether scrapping a car, bike, or commercial truck - a fully legal, hassle-free alternative to traditional scrap yards. Every vehicle we process goes through verified Parivahan database checks, scientific depollution, and fair, transparent payouts, backed by a legally valid Certificate of Deposit (CoD) and Certificate of Vehicle Scrapping (CVS).
+                  </p>
+                  <p>
+                    Whether you&apos;re an individual vehicle owner, a fleet operator, or an insurance company managing total-loss vehicles, CarCrush24 makes vehicle scrapping safe, documented, and environmentally responsible - with zero middlemen involved.
                   </p>
                 </div>
 
@@ -178,7 +225,7 @@ export default function AboutPage() {
                     </h3>
 
                     <p className="text-[11.5px] sm:text-xs text-gray-300 leading-relaxed mb-5 font-normal">
-                      Every vehicle processed at CarCrush24 undergoes a scientific 4-stage depollution cycle—recovering refrigerants, batteries, hydraulic oils, and rubber before industrial metal shearing.
+                      Every vehicle processed at CarCrush24 undergoes a scientific 4-stage depollution cycle-recovering refrigerants, batteries, hydraulic oils, and rubber before industrial metal shearing.
                     </p>
 
                     <div className="space-y-2.5 pt-4 border-t border-white/10 text-[11px] sm:text-xs text-gray-300">
@@ -370,7 +417,7 @@ export default function AboutPage() {
                   </span>
 
                   <p className="text-xs sm:text-[13.5px] text-[#4B5563] leading-relaxed mb-6 font-normal">
-                    To pioneer India’s closed-loop automotive manufacturing ecosystem by constructing a technology-first network of automated RVSF mega-hubs—returning 90%+ of scrap metals directly into clean domestic industrial production.
+                    To pioneer India’s closed-loop automotive manufacturing ecosystem by constructing a technology-first network of automated RVSF mega-hubs-returning 90%+ of scrap metals directly into clean domestic industrial production.
                   </p>
 
                   {/* 3 Structured Pillar Rows */}
@@ -450,7 +497,7 @@ export default function AboutPage() {
 
               {/* Subtitle */}
               <p className="mt-4 sm:mt-5 text-[#5B6660] text-xs sm:text-[14px] leading-relaxed max-w-2xl mx-auto">
-                We don&apos;t just recycle metal — we uphold values that build a cleaner, safer and more sustainable future.
+                We don&apos;t just recycle metal - we uphold values that build a cleaner, safer and more sustainable future.
               </p>
             </div>
 
@@ -531,10 +578,6 @@ export default function AboutPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="relative rounded-3xl sm:rounded-[36px] bg-[#0A160D] border-2 border-[#1E3B23] p-8 sm:p-12 lg:p-14 shadow-[0_16px_50px_rgba(0,0,0,0.12)] text-white overflow-hidden">
 
-              {/* Internal Ambient Radial Lighting */}
-              <div className="absolute -top-24 right-1/4 w-96 h-96 bg-[#6FCF3C]/12 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 left-1/4 w-96 h-96 bg-[#188A38]/15 rounded-full blur-3xl pointer-events-none" />
-
               <div className="relative z-10 max-w-4xl mx-auto text-center">
 
                 {/* Eyebrow badge with decorative green lines */}
@@ -595,7 +638,7 @@ export default function AboutPage() {
                 <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link
                     href="/quote"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#6FCF3C] to-[#22C55E] text-[#070D09] font-black text-sm sm:text-base tracking-tight hover:scale-105 active:scale-95 transition-all shadow-[0_4px_24px_rgba(111,207,60,0.35)] cursor-pointer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#6FCF3C] to-[#22C55E] text-[#070D09] font-black text-sm sm:text-base tracking-tight hover:scale-105 active:scale-95 transition-all cursor-pointer"
                   >
                     <span>Calculate Scrap Value Now</span>
                     <span className="text-lg leading-none">→</span>

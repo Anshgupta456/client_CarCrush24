@@ -1,7 +1,6 @@
-import { blogs } from '../data/blogsData';
-
 export default async function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://carcrush24.com';
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
 
   const staticPages = [
     {
@@ -21,6 +20,12 @@ export default async function sitemap() {
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/scrapping-process`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/about`,
@@ -60,12 +65,23 @@ export default async function sitemap() {
     },
   ];
 
-  const blogPages = (blogs || []).map((b) => ({
-    url: `${baseUrl}/blogs/${b.slug}`,
-    lastModified: new Date(b.date || Date.now()),
-    changeFrequency: 'monthly',
-    priority: 0.7,
-  }));
+  let blogPages = [];
+  try {
+    const res = await fetch(`${apiBase}/api/blogs`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (Array.isArray(json.data)) {
+        blogPages = json.data.map((b) => ({
+          url: `${baseUrl}/blogs/${b.slug}`,
+          lastModified: new Date(b.updatedAt || b.createdAt || b.date || Date.now()),
+          changeFrequency: 'monthly',
+          priority: 0.7,
+        }));
+      }
+    }
+  } catch {
+    // Graceful fallback if backend is offline during build
+  }
 
   return [...staticPages, ...blogPages];
 }

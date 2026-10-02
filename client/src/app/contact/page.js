@@ -491,9 +491,6 @@ export default function ContactPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="relative rounded-3xl sm:rounded-[36px] bg-[#0A160D] border-2 border-[#1E3B23] p-8 sm:p-12 lg:p-14 shadow-[0_16px_50px_rgba(0,0,0,0.12)] text-white overflow-hidden">
 
-              <div className="absolute -top-24 right-1/4 w-96 h-96 bg-[#6FCF3C]/12 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 left-1/4 w-96 h-96 bg-[#188A38]/15 rounded-full blur-3xl pointer-events-none" />
-
               <div className="relative z-10 max-w-3xl mx-auto text-center">
                 <div className="inline-flex items-center justify-center gap-3 mb-3 sm:mb-4">
                   <span className="w-8 sm:w-12 h-[2px] bg-[#6FCF3C]" />
@@ -514,7 +511,7 @@ export default function ContactPage() {
                 <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link
                     href="/quote"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#6FCF3C] to-[#22C55E] text-[#070D09] font-black text-sm sm:text-base tracking-tight hover:scale-105 active:scale-95 transition-all shadow-[0_4px_24px_rgba(111,207,60,0.35)] cursor-pointer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#6FCF3C] to-[#22C55E] text-[#070D09] font-black text-sm sm:text-base tracking-tight hover:scale-105 active:scale-95 transition-all cursor-pointer"
                   >
                     <span>Calculate Scrap Value Online</span>
                     <span className="text-lg leading-none">→</span>

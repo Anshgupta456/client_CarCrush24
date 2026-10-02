@@ -2,8 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { initialLeads, adminMetrics } from '../data/adminMockData';
-import { blogs as initialBlogs } from '../data/blogsData';
-import { initialTestimonials } from '../data/testimonialsData';
 
 const AdminContext = createContext(null);
 
@@ -16,8 +14,8 @@ export function AdminProvider({ children }) {
   const [token, setToken] = useState(null);
 
   const [leads, setLeads] = useState(initialLeads);
-  const [blogs, setBlogs] = useState(initialBlogs);
-  const [testimonials, setTestimonials] = useState(initialTestimonials);
+  const [blogs, setBlogs] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
   const [metrics, setMetrics] = useState(adminMetrics);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedLead, setSelectedLead] = useState(null);
@@ -76,26 +74,26 @@ export function AdminProvider({ children }) {
     } catch { }
   }, [authFetch]);
 
-  // Fetch blogs from API
+  // Fetch blogs dynamically from API
   const refreshBlogs = useCallback(async () => {
     try {
       const res = await fetch('/api/blogs');
       if (res && res.ok) {
         const json = await res.json();
-        if (json.data && json.data.length > 0) {
+        if (Array.isArray(json.data)) {
           setBlogs(json.data.map((b) => ({ ...b, id: b._id || b.id })));
         }
       }
     } catch { }
   }, []);
 
-  // Fetch testimonials from API
+  // Fetch testimonials dynamically from API
   const refreshTestimonials = useCallback(async () => {
     try {
       const res = await fetch('/api/testimonials');
       if (res && res.ok) {
         const json = await res.json();
-        if (json.data && json.data.length > 0) {
+        if (Array.isArray(json.data)) {
           setTestimonials(json.data.map((t) => ({ ...t, id: t._id || t.id })));
         }
       }

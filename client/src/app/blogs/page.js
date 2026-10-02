@@ -7,10 +7,8 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import SectionHeader from '../../components/SectionHeader';
 import { HelplineButton } from '../../components/HelplineCallout';
-import { blogs as initialBlogs } from '../../data/blogsData';
-
 export default function BlogsPage() {
-  const [blogs, setBlogs] = useState(initialBlogs);
+  const [blogs, setBlogs] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -19,12 +17,12 @@ export default function BlogsPage() {
       const res = await fetch('/api/blogs');
       if (res.ok) {
         const json = await res.json();
-        if (json.data && json.data.length > 0) {
+        if (Array.isArray(json.data)) {
           setBlogs(json.data);
         }
       }
     } catch {
-      // Fallback stays active gracefully
+      // Graceful error handling
     }
   }, []);
 
@@ -50,7 +48,7 @@ export default function BlogsPage() {
     return matchesCategory && matchesSearch;
   });
 
-  const featuredPost = blogs.find((b) => b.featured) || blogs[0] || initialBlogs[0];
+  const featuredPost = blogs.find((b) => b.featured) || blogs[0] || null;
 
   return (
     <div className="relative min-h-screen flex flex-col bg-[#FBFDFB]">
@@ -120,10 +118,9 @@ export default function BlogsPage() {
 
 
         {/* ================= FEATURED POST SPOTLIGHT ================= */}
-        {selectedCategory === 'All' && !searchQuery && (
+        {selectedCategory === 'All' && !searchQuery && featuredPost && (
           <section className="relative pb-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div className="rounded-3xl bg-[#09120B] border-2 border-[#2EE060]/50 p-6 sm:p-10 shadow-[0_0_35px_rgba(46,224,96,0.12)] text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-[#2EE060]/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="rounded-3xl bg-[#09120B] border-2 border-[#2EE060]/50 p-6 sm:p-10 shadow-md text-white relative overflow-hidden">
 
               <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
                 <div className="lg:col-span-7">
@@ -208,7 +205,13 @@ export default function BlogsPage() {
               </span>
             </div>
 
-            {filteredBlogs.length === 0 ? (
+            {blogs.length === 0 ? (
+              <div className="py-16 text-center">
+                <span className="text-4xl">📚</span>
+                <h4 className="text-base font-bold text-[#111827] mt-3">No Published Articles Yet</h4>
+                <p className="text-xs text-[#6B7280] mt-1">Our team is preparing new automotive policy and scrappage guides. Check back soon!</p>
+              </div>
+            ) : filteredBlogs.length === 0 ? (
               <div className="py-16 text-center">
                 <span className="text-4xl">🔍</span>
                 <h4 className="text-base font-bold text-[#111827] mt-3">No articles match your search</h4>

@@ -38,9 +38,7 @@ export default function CompanyProfileView() {
     operatingHours: company?.operatingHours || 'Mon - Sat: 9:00 AM - 7:30 PM (Sunday Closed)',
     operatingHubs: company?.operatingHubs ? (Array.isArray(company.operatingHubs) ? company.operatingHubs.join(', ') : company.operatingHubs) : '',
     facebookUrl: company?.socialLinks?.facebook || company?.facebookUrl || '',
-    twitterUrl: company?.socialLinks?.twitter || company?.twitterUrl || '',
     instagramUrl: company?.socialLinks?.instagram || company?.instagramUrl || '',
-    linkedinUrl: company?.socialLinks?.linkedin || company?.linkedinUrl || '',
     youtubeUrl: company?.socialLinks?.youtube || company?.youtubeUrl || '',
   });
 
@@ -76,7 +74,15 @@ export default function CompanyProfileView() {
 
     setCompanySaving(true);
     try {
-      const res = await updateCompany(companyForm);
+      const payload = {
+        ...companyForm,
+        socialLinks: {
+          facebook: companyForm.facebookUrl || 'https://facebook.com/carcrush24',
+          instagram: companyForm.instagramUrl || 'https://instagram.com/carcrush24',
+          youtube: companyForm.youtubeUrl || 'https://youtube.com/@carcrush24',
+        },
+      };
+      const res = await updateCompany(payload);
       setCompanySaving(false);
       if (res.success) {
         setCompanyStatus({
@@ -426,13 +432,13 @@ export default function CompanyProfileView() {
 
                 <div>
                   <label className="block text-xs font-semibold text-[#131A15] uppercase tracking-wider mb-1.5">
-                    LinkedIn URL
+                    YouTube URL
                   </label>
                   <input
                     type="url"
-                    value={companyForm.linkedinUrl}
-                    onChange={(e) => setCompanyForm({ ...companyForm, linkedinUrl: e.target.value })}
-                    placeholder="https://linkedin.com/company/carcrush24"
+                    value={companyForm.youtubeUrl}
+                    onChange={(e) => setCompanyForm({ ...companyForm, youtubeUrl: e.target.value })}
+                    placeholder="https://youtube.com/@carcrush24"
                     className="w-full px-4 py-2 rounded-xl bg-[#F8F9F5] border border-[#E4E7DE] text-xs text-[#131A15] focus:outline-none focus:border-[#1F5C33]"
                   />
                 </div>

@@ -10,11 +10,7 @@ export default function CtaBannerSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Deep Black Banner with Neon Green Border */}
-        <div className="relative rounded-[28px] sm:rounded-[36px] bg-[#070D09] border-[2.5px] border-[#2EE060] p-6 sm:p-8 lg:p-9 shadow-[0_0_36px_rgba(46,224,96,0.16)] overflow-hidden">
-
-          {/* Subtle green ambient lighting in the dark container */}
-          <div className="absolute top-0 left-0 w-80 h-80 bg-[#2EE060]/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#2EE060]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative rounded-[28px] sm:rounded-[36px] bg-[#070D09] border-[2.5px] border-[#2EE060] p-6 sm:p-8 lg:p-9 shadow-md overflow-hidden">
 
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-10">
 
@@ -47,7 +43,7 @@ export default function CtaBannerSection() {
                 </h2>
 
                 <p className="text-xs sm:text-[13.5px] text-gray-300 max-w-xl mt-2 leading-relaxed font-normal">
-                  Quick, easy and hassle-free. Turn your old vehicle into value — and help build a cleaner tomorrow.
+                  Quick, easy and hassle-free. Turn your old vehicle into value - and help build a cleaner tomorrow.
                 </p>
               </div>
 

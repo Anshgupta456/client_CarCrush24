@@ -39,10 +39,9 @@ export const defaultCompanyProfile = {
     'Chandigarh',
   ],
   socialLinks: {
-    twitter: 'https://twitter.com/carcrush24',
-    linkedin: 'https://linkedin.com/company/carcrush24',
     facebook: 'https://facebook.com/carcrush24',
     instagram: 'https://instagram.com/carcrush24',
+    youtube: 'https://youtube.com/@carcrush24',
   },
 };
 
@@ -133,7 +132,7 @@ export const defaultPolicies = {
       {
         id: 'depollution-environmental',
         heading: '7. Environmental & Depollution Standards',
-        content: 'Vehicles delivered to CarCrush24 undergo a rigorous 4-stage scientific depollution protocol—including draining engine oils, transmission fluids, coolant, battery acids, and Freon gas recovery—in full adherence to Central Pollution Control Board (CPCB) guidelines and ISO 14001 environmental benchmarks.'
+        content: 'Vehicles delivered to CarCrush24 undergo a rigorous 4-stage scientific depollution protocol-including draining engine oils, transmission fluids, coolant, battery acids, and Freon gas recovery-in full adherence to Central Pollution Control Board (CPCB) guidelines and ISO 14001 environmental benchmarks.'
       },
       {
         id: 'jurisdiction',
@@ -186,11 +185,9 @@ export const getStoredTestimonials = async () => {
   if (isMongoConnected()) {
     try {
       const list = await Testimonial.find().sort({ createdAt: -1 }).lean();
-      if (list && list.length > 0) {
-        return list.map((t) => ({ ...t, id: t._id.toString() }));
-      }
+      return (list || []).map((t) => ({ ...t, id: t._id.toString() }));
     } catch (err) {
-      console.warn('[dbStore] MongoDB read error, falling back to JSON store:', err.message);
+      console.warn('[dbStore] MongoDB read testimonials error, falling back to file store:', err.message);
     }
   }
   const store = readStore();
@@ -210,23 +207,38 @@ export const saveStoredTestimonial = async (data) => {
     createdAt: new Date().toISOString(),
   };
 
-  store.testimonials = [newItem, ...(store.testimonials || [])];
-  writeStore(store);
-
   if (isMongoConnected()) {
     try {
       const doc = new Testimonial(newItem);
       await doc.save();
       newItem._id = doc._id.toString();
+      newItem.id = doc._id.toString();
     } catch (err) {
-      console.warn('[dbStore] Could not persist to MongoDB:', err.message);
+      console.warn('[dbStore] Could not persist testimonial to MongoDB:', err.message);
     }
   }
+
+  store.testimonials = [newItem, ...(store.testimonials || [])];
+  writeStore(store);
 
   return newItem;
 };
 
 export const updateStoredTestimonial = async (id, data) => {
+  let updatedDoc = null;
+  if (isMongoConnected()) {
+    try {
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        updatedDoc = await Testimonial.findByIdAndUpdate(id, data, { new: true }).lean();
+        if (updatedDoc) {
+          updatedDoc.id = updatedDoc._id.toString();
+        }
+      }
+    } catch (err) {
+      console.warn('[dbStore] MongoDB update testimonial failed:', err.message);
+    }
+  }
+
   const store = readStore();
   let updatedItem = null;
   store.testimonials = (store.testimonials || []).map((t) => {
@@ -241,20 +253,22 @@ export const updateStoredTestimonial = async (id, data) => {
     writeStore(store);
   }
 
-  if (isMongoConnected()) {
-    try {
-      if (mongoose.Types.ObjectId.isValid(id)) {
-        await Testimonial.findByIdAndUpdate(id, data, { new: true });
-      }
-    } catch (err) {
-      console.warn('[dbStore] MongoDB update failed:', err.message);
-    }
-  }
-
-  return updatedItem;
+  return updatedDoc || updatedItem;
 };
 
 export const deleteStoredTestimonial = async (id) => {
+  let mongoDeleted = false;
+  if (isMongoConnected()) {
+    try {
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        const res = await Testimonial.findByIdAndDelete(id);
+        mongoDeleted = !!res;
+      }
+    } catch (err) {
+      console.warn('[dbStore] MongoDB delete testimonial failed:', err.message);
+    }
+  }
+
   const store = readStore();
   const initialLen = store.testimonials?.length || 0;
   store.testimonials = (store.testimonials || []).filter(
@@ -262,17 +276,7 @@ export const deleteStoredTestimonial = async (id) => {
   );
   writeStore(store);
 
-  if (isMongoConnected()) {
-    try {
-      if (mongoose.Types.ObjectId.isValid(id)) {
-        await Testimonial.findByIdAndDelete(id);
-      }
-    } catch (err) {
-      console.warn('[dbStore] MongoDB delete failed:', err.message);
-    }
-  }
-
-  return store.testimonials.length < initialLen;
+  return mongoDeleted || store.testimonials.length < initialLen;
 };
 
 // --- Blogs ---
@@ -280,11 +284,9 @@ export const getStoredBlogs = async () => {
   if (isMongoConnected()) {
     try {
       const list = await Blog.find().sort({ createdAt: -1 }).lean();
-      if (list && list.length > 0) {
-        return list.map((b) => ({ ...b, id: b._id.toString() }));
-      }
+      return (list || []).map((b) => ({ ...b, id: b._id.toString() }));
     } catch (err) {
-      console.warn('[dbStore] MongoDB read blogs error, falling back to JSON store:', err.message);
+      console.warn('[dbStore] MongoDB read blogs error, falling back to file store:', err.message);
     }
   }
   const store = readStore();
@@ -292,8 +294,24 @@ export const getStoredBlogs = async () => {
 };
 
 export const getStoredBlogBySlug = async (slug) => {
+  if (isMongoConnected()) {
+    try {
+      const blog = await Blog.findOne({
+        $or: [
+          { slug: String(slug).toLowerCase().trim() },
+          ...(mongoose.Types.ObjectId.isValid(slug) ? [{ _id: slug }] : []),
+        ],
+      }).lean();
+      if (blog) {
+        return { ...blog, id: blog._id.toString() };
+      }
+      return null;
+    } catch (err) {
+      console.warn('[dbStore] MongoDB find blog by slug error:', err.message);
+    }
+  }
   const all = await getStoredBlogs();
-  return all.find((b) => b.slug === slug) || null;
+  return all.find((b) => b.slug === slug || String(b.id) === String(slug) || String(b._id) === String(slug)) || null;
 };
 
 export const saveStoredBlog = async (data) => {
@@ -328,23 +346,43 @@ export const saveStoredBlog = async (data) => {
     createdAt: new Date().toISOString(),
   };
 
-  store.blogs = [newBlog, ...(store.blogs || [])];
-  writeStore(store);
-
   if (isMongoConnected()) {
     try {
       const doc = new Blog(newBlog);
       await doc.save();
       newBlog._id = doc._id.toString();
+      newBlog.id = doc._id.toString();
     } catch (err) {
       console.warn('[dbStore] Could not persist blog to MongoDB:', err.message);
     }
   }
 
+  store.blogs = [newBlog, ...(store.blogs || [])];
+  writeStore(store);
+
   return newBlog;
 };
 
 export const updateStoredBlog = async (id, data) => {
+  let updatedDoc = null;
+  if (isMongoConnected()) {
+    try {
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        updatedDoc = await Blog.findByIdAndUpdate(id, data, { new: true }).lean();
+        if (updatedDoc) {
+          updatedDoc.id = updatedDoc._id.toString();
+        }
+      } else {
+        updatedDoc = await Blog.findOneAndUpdate({ slug: id }, data, { new: true }).lean();
+        if (updatedDoc) {
+          updatedDoc.id = updatedDoc._id.toString();
+        }
+      }
+    } catch (err) {
+      console.warn('[dbStore] MongoDB blog update failed:', err.message);
+    }
+  }
+
   const store = readStore();
   let updated = null;
   store.blogs = (store.blogs || []).map((b) => {
@@ -359,20 +397,25 @@ export const updateStoredBlog = async (id, data) => {
     writeStore(store);
   }
 
-  if (isMongoConnected()) {
-    try {
-      if (mongoose.Types.ObjectId.isValid(id)) {
-        await Blog.findByIdAndUpdate(id, data, { new: true });
-      }
-    } catch (err) {
-      console.warn('[dbStore] MongoDB blog update failed:', err.message);
-    }
-  }
-
-  return updated;
+  return updatedDoc || updated;
 };
 
 export const deleteStoredBlog = async (id) => {
+  let mongoDeleted = false;
+  if (isMongoConnected()) {
+    try {
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        const res = await Blog.findByIdAndDelete(id);
+        mongoDeleted = !!res;
+      } else {
+        const res = await Blog.findOneAndDelete({ slug: id });
+        mongoDeleted = !!res;
+      }
+    } catch (err) {
+      console.warn('[dbStore] MongoDB blog delete failed:', err.message);
+    }
+  }
+
   const store = readStore();
   const initialLen = store.blogs?.length || 0;
   store.blogs = (store.blogs || []).filter(
@@ -380,17 +423,7 @@ export const deleteStoredBlog = async (id) => {
   );
   writeStore(store);
 
-  if (isMongoConnected()) {
-    try {
-      if (mongoose.Types.ObjectId.isValid(id)) {
-        await Blog.findByIdAndDelete(id);
-      }
-    } catch (err) {
-      console.warn('[dbStore] MongoDB blog delete failed:', err.message);
-    }
-  }
-
-  return store.blogs.length < initialLen;
+  return mongoDeleted || store.blogs.length < initialLen;
 };
 
 // --- Leads ---
