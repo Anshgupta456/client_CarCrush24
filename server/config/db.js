@@ -1,5 +1,13 @@
+import dns from 'dns';
 import mongoose from 'mongoose';
 import { seedInitialDatabase } from './seed.js';
+
+// Resolve MongoDB SRV records reliably on Windows/local networks
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch (dnsErr) {
+  console.warn('[DNS] Notice: Could not set custom DNS servers:', dnsErr.message);
+}
 
 export const connectDB = async () => {
   let mongoUri = process.env.MONGODB_URI;
@@ -10,7 +18,7 @@ export const connectDB = async () => {
 
   try {
     const conn = await mongoose.connect(mongoUri, {
-      serverSelectionTimeoutMS: 4000,
+      serverSelectionTimeoutMS: 8000,
     });
     console.log(`[MongoDB] Connected successfully: ${conn.connection.host}/${conn.connection.name}`);
 
@@ -23,3 +31,4 @@ export const connectDB = async () => {
     return false;
   }
 };
+

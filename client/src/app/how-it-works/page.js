@@ -198,7 +198,7 @@ export default function HowItWorksPage() {
               eyebrow="5-STEP RVSF VEHICLE SCRAPPAGE JOURNEY"
               title="How CarCrush24 Works:"
               highlight="Simple, Transparent &amp; Legally Certified."
-              description="From instant digital valuation to doorstep towing and official MoRTH Parivahan RTO deregistrations—we handle every step so you can retire your end-of-life vehicle with total peace of mind."
+              description="From instant digital valuation to doorstep towing and official MoRTH Parivahan RTO deregistrations-we handle every step so you can retire your end-of-life vehicle with total peace of mind."
               align="center"
               titleClassName="text-3xl sm:text-4xl lg:text-[46px] font-black text-[#111827] tracking-tight leading-[1.14] max-w-4xl mx-auto"
             />

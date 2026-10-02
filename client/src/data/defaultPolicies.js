@@ -101,7 +101,7 @@ export const defaultPolicies = {
         id: 'depollution-environmental',
         heading: '7. Environmental & Depollution Standards',
         content:
-          'Vehicles delivered to CarCrush24 undergo a rigorous 4-stage scientific depollution protocol—including draining engine oils, transmission fluids, coolant, battery acids, and Freon gas recovery—in full adherence to Central Pollution Control Board (CPCB) guidelines and ISO 14001 environmental benchmarks.',
+          'Vehicles delivered to CarCrush24 undergo a rigorous 4-stage scientific depollution protocol-including draining engine oils, transmission fluids, coolant, battery acids, and Freon gas recovery-in full adherence to Central Pollution Control Board (CPCB) guidelines and ISO 14001 environmental benchmarks.',
       },
       {
         id: 'jurisdiction',

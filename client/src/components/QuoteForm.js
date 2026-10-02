@@ -720,7 +720,7 @@ ${data.city && data.postalCode ? `• *Location:* ${data.city} (${data.postalCod
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3.5 sm:py-4 px-6 rounded-2xl bg-gradient-to-r from-[#188A38] to-[#126829] hover:from-[#157931] hover:to-[#0f5421] text-white font-black text-sm sm:text-base tracking-wide uppercase shadow-[0_10px_25px_rgba(24,138,56,0.25)] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 sm:py-4 px-6 rounded-2xl bg-gradient-to-r from-[#188A38] to-[#126829] hover:from-[#157931] hover:to-[#0f5421] text-white font-black text-sm sm:text-base tracking-wide uppercase shadow-sm transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
               >
                 {isSubmitting ? (
                   <>
@@ -1019,7 +1019,7 @@ ${data.city && data.postalCode ? `• *Location:* ${data.city} (${data.postalCod
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full mt-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#6FCF3C] to-[#5AB82E] hover:from-[#5AB82E] hover:to-[#4EA326] text-[#08180c] font-black text-xs sm:text-sm tracking-wider uppercase shadow-[0_8px_20px_rgba(111,207,60,0.35)] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-1.5 cursor-pointer"
+            className="w-full mt-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#6FCF3C] to-[#5AB82E] hover:from-[#5AB82E] hover:to-[#4EA326] text-[#08180c] font-black text-xs sm:text-sm tracking-wider uppercase transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-1.5 cursor-pointer"
           >
             {isSubmitting ? (
               <>

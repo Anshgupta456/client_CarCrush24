@@ -1,9 +1,15 @@
 import Admin from '../models/Admin.js';
 import Lead from '../models/Lead.js';
 import Part from '../models/Part.js';
+import Blog from '../models/Blog.js';
+import Testimonial from '../models/Testimonial.js';
+import CompanyProfile from '../models/CompanyProfile.js';
+import { readStore } from '../services/dbStore.js';
 
 export const seedInitialDatabase = async () => {
   try {
+    const store = readStore();
+
     // 1. Seed Primary Admin
     const adminCount = await Admin.countDocuments();
     if (adminCount === 0) {
@@ -24,10 +30,38 @@ export const seedInitialDatabase = async () => {
       console.log(`[Seed] Admin user exists (${adminCount} found in DB).`);
     }
 
-    // 2. Leads start empty - populated dynamically by customer quote submissions
+    // 2. Sync Blogs from file store if Atlas has fewer blogs
+    const blogCount = await Blog.countDocuments();
+    if (blogCount === 0 && store.blogs && store.blogs.length > 0) {
+      for (const b of store.blogs) {
+        const { id, _id, ...blogData } = b;
+        await Blog.findOneAndUpdate({ slug: b.slug }, blogData, { upsert: true, new: true });
+      }
+      console.log(`[Seed] Synced ${store.blogs.length} blogs into MongoDB Atlas.`);
+    }
 
+    // 3. Sync Testimonials from file store
+    // Remove obsolete test testimonials with author 'test'
+    await Testimonial.deleteMany({ author: { $in: ['test', 'Test'] } });
+    const testimonialCount = await Testimonial.countDocuments();
+    if (testimonialCount === 0 && store.testimonials && store.testimonials.length > 0) {
+      for (const t of store.testimonials) {
+        if (t.author && t.author.toLowerCase() !== 'test') {
+          const { id, _id, ...testData } = t;
+          await Testimonial.create(testData);
+        }
+      }
+      console.log(`[Seed] Synced ${store.testimonials.length} testimonials into MongoDB Atlas.`);
+    }
 
-    // 3. Seed Initial Inventory if empty
+    // 4. Sync Company Profile if empty in Atlas
+    const companyCount = await CompanyProfile.countDocuments();
+    if (companyCount === 0 && store.company) {
+      await CompanyProfile.create(store.company);
+      console.log('[Seed] Synced Company Profile into MongoDB Atlas.');
+    }
+
+    // 5. Seed Initial Inventory if empty
     const partCount = await Part.countDocuments();
     if (partCount === 0) {
       const sampleParts = [
@@ -76,3 +110,4 @@ export const seedInitialDatabase = async () => {
     console.error('[Seed Error] Failed to seed database:', err);
   }
 };
+

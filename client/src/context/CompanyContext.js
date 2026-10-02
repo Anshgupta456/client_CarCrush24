@@ -29,10 +29,9 @@ export const initialCompanyDetails = {
     'Chandigarh',
   ],
   socialLinks: {
-    twitter: 'https://twitter.com/carcrush24',
-    linkedin: 'https://linkedin.com/company/carcrush24',
     facebook: 'https://facebook.com/carcrush24',
     instagram: 'https://instagram.com/carcrush24',
+    youtube: 'https://youtube.com/@carcrush24',
   },
 };
 
@@ -55,6 +54,11 @@ export const normalizeCompanyProfile = (profile) => {
       .map((h) => h.trim())
       .filter(Boolean);
   }
+  normalized.socialLinks = {
+    facebook: normalized.facebookUrl || normalized.socialLinks?.facebook || 'https://facebook.com/carcrush24',
+    instagram: normalized.instagramUrl || normalized.socialLinks?.instagram || 'https://instagram.com/carcrush24',
+    youtube: normalized.youtubeUrl || normalized.socialLinks?.youtube || 'https://youtube.com/@carcrush24',
+  };
   return normalized;
 };
 

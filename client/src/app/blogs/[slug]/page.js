@@ -6,25 +6,23 @@ import Navbar from '../../../components/Navbar';
 import Footer from '../../../components/Footer';
 import SectionHeader from '../../../components/SectionHeader';
 import { SidebarHelplineCard, HelplineButton } from '../../../components/HelplineCallout';
-import { blogs, getBlogBySlug } from '../../../data/blogsData';
+export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams() {
-  return blogs.map((blog) => ({
-    slug: blog.slug,
-  }));
+  return [];
 }
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   let blog = null;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://127.0.0.1:5000';
   try {
-    const res = await fetch(`http://127.0.0.1:5000/api/blogs/${slug}`, { next: { revalidate: 30 } });
+    const res = await fetch(`${baseUrl}/api/blogs/${slug}`, { cache: 'no-store' });
     if (res.ok) {
       const json = await res.json();
       if (json.data) blog = json.data;
     }
   } catch { }
-  if (!blog) blog = getBlogBySlug(slug);
 
   if (!blog) {
     return {
@@ -42,20 +40,31 @@ export async function generateMetadata({ params }) {
 export default async function SingleBlogPage({ params }) {
   const { slug } = await params;
   let blog = null;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://127.0.0.1:5000';
   try {
-    const res = await fetch(`http://127.0.0.1:5000/api/blogs/${slug}`, { next: { revalidate: 30 } });
+    const res = await fetch(`${baseUrl}/api/blogs/${slug}`, { cache: 'no-store' });
     if (res.ok) {
       const json = await res.json();
       if (json.data) blog = json.data;
     }
   } catch { }
-  if (!blog) blog = getBlogBySlug(slug);
 
   if (!blog) {
     notFound();
   }
 
-  const relatedBlogs = blogs.filter((b) => b.id !== blog.id && b.slug !== blog.slug).slice(0, 3);
+  let relatedBlogs = [];
+  try {
+    const res = await fetch(`${baseUrl}/api/blogs`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      if (Array.isArray(json.data)) {
+        relatedBlogs = json.data
+          .filter((b) => b.slug !== blog.slug && String(b.id || b._id) !== String(blog.id || blog._id))
+          .slice(0, 3);
+      }
+    }
+  } catch { }
 
   return (
     <div className="relative min-h-screen flex flex-col bg-[#FBFDFB]">
@@ -254,8 +263,7 @@ export default async function SingleBlogPage({ params }) {
 
                         {/* In-Content CTA Box */}
                         {sec.inContentCta && (
-                          <div className="my-8 sm:my-10 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#0F1F13] to-[#08130A] text-white border-2 border-[#6FCF3C]/40 shadow-[0_8px_30px_rgba(111,207,60,0.12)] relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-[#6FCF3C]/10 rounded-full blur-2xl pointer-events-none" />
+                          <div className="my-8 sm:my-10 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#0F1F13] to-[#08130A] text-white border-2 border-[#6FCF3C]/40 relative overflow-hidden">
                             <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
                               <div className="max-w-xl text-center sm:text-left">
                                 <span className="text-[10.5px] font-black uppercase tracking-[0.2em] text-[#6FCF3C] mb-1 block">
@@ -477,9 +485,6 @@ export default async function SingleBlogPage({ params }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="relative rounded-3xl sm:rounded-[36px] bg-[#0A160D] border-2 border-[#1E3B23] p-8 sm:p-12 lg:p-14 shadow-[0_16px_50px_rgba(0,0,0,0.12)] text-white overflow-hidden">
 
-              <div className="absolute -top-24 right-1/4 w-96 h-96 bg-[#6FCF3C]/12 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-24 left-1/4 w-96 h-96 bg-[#188A38]/15 rounded-full blur-3xl pointer-events-none" />
-
               <div className="relative z-10 max-w-3xl mx-auto text-center">
 
                 <div className="inline-flex items-center justify-center gap-3 mb-3 sm:mb-4">
@@ -504,7 +509,7 @@ export default async function SingleBlogPage({ params }) {
                 <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link
                     href="/quote"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#6FCF3C] to-[#22C55E] text-[#070D09] font-black text-sm sm:text-base tracking-tight hover:scale-105 active:scale-95 transition-all shadow-[0_4px_24px_rgba(111,207,60,0.35)] cursor-pointer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#6FCF3C] to-[#22C55E] text-[#070D09] font-black text-sm sm:text-base tracking-tight hover:scale-105 active:scale-95 transition-all cursor-pointer"
                   >
                     <span>Get Your Free Scrap Quote Now</span>
                     <span className="text-lg leading-none">→</span>

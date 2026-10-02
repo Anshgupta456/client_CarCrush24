@@ -2,23 +2,21 @@
 
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import SectionHeader from './SectionHeader';
-import { initialTestimonials as TESTIMONIALS } from '../data/testimonialsData';
-
 export default function TestimonialsSection() {
   const scrollRef = useRef(null);
-  const [testimonials, setTestimonials] = useState(TESTIMONIALS);
+  const [testimonials, setTestimonials] = useState([]);
 
   const fetchTestimonials = useCallback(async () => {
     try {
       const res = await fetch('/api/testimonials');
       if (res.ok) {
         const json = await res.json();
-        if (json.data && json.data.length > 0) {
+        if (Array.isArray(json.data)) {
           setTestimonials(json.data);
         }
       }
     } catch {
-      // Fallback stays active gracefully
+      // Graceful error handling
     }
   }, []);
 
@@ -37,6 +35,10 @@ export default function TestimonialsSection() {
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
+
+  if (!testimonials || testimonials.length === 0) {
+    return null;
+  }
 
   return (
     <section className="relative py-10 sm:py-12 lg:py-16 bg-[#FBFDFB] overflow-hidden">

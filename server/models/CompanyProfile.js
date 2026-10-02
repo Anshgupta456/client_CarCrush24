@@ -98,14 +98,6 @@ const companyProfileSchema = new mongoose.Schema(
       ],
     },
     socialLinks: {
-      twitter: {
-        type: String,
-        default: 'https://twitter.com/carcrush24',
-      },
-      linkedin: {
-        type: String,
-        default: 'https://linkedin.com/company/carcrush24',
-      },
       facebook: {
         type: String,
         default: 'https://facebook.com/carcrush24',
@@ -113,6 +105,10 @@ const companyProfileSchema = new mongoose.Schema(
       instagram: {
         type: String,
         default: 'https://instagram.com/carcrush24',
+      },
+      youtube: {
+        type: String,
+        default: 'https://youtube.com/@carcrush24',
       },
     },
   },
